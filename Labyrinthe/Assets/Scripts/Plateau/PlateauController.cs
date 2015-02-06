@@ -14,7 +14,7 @@ public class PlateauController : MonoBehaviour {
 		float v = Input.GetAxisRaw ("Horizontal");
 
 		// Set the movement vector based on the axis input.
-		rotation += new Vector3 (h, 0f, -v) * speed * Time.deltaTime;
+		rotation += new Vector3 (h, 0f, -v) * speed * Time.smoothDeltaTime;
 
 		clamp ();
 

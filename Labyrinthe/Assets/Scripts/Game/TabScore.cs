@@ -10,6 +10,9 @@ public class TabScore : MonoBehaviour {
 	public Text dieText;
 
 	public void GenerateScore(float time, float die){
+		//A REVOIR
+		scoreText.text += time * 100f - die * 500f;
+
 		timeText.text += time;
 		dieText.text += die;
 	}
