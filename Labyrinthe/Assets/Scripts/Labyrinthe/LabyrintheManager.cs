@@ -7,22 +7,30 @@ using System;
 
 public class LabyrintheManager : MonoBehaviour {
 
-	private string folderDocs = "/Documents";
-	private string folderLevels = "/Levels";
-	private string folderPieces = "/Pieces";
-	private string folderSave = "/Save";
+	public static string folderDocs = "/Documents";
+	public static string folderLevels = "/Levels";
+	public static string folderPieces = "/Pieces";
+	public static string folderSave = "/Save";
 
-	private List<Piece> listPieces;
+	public static float sizePiece = 3.5f;
+
+	private Piece [] listPieces;
 	private Level currentLevel;
+	private GameObject plateau;
 
+	public GameObject bille;
+	public GameObject exit;
+	
 	void Awake(){
 		DontDestroyOnLoad (gameObject);
+	
+		plateau = GameObject.Find ("Plateau");
+		currentLevel = null;
 
-		listPieces = new List<Piece> ();
-		//LoadPieces ();
+		LoadPieces ();
+		LoadLevel (1);
 
-		LoadLevel (2);
-		
+		GenerateLabyrinthe ();
 	}
 
 	public void LoadPieces(){
@@ -36,12 +44,14 @@ public class LabyrintheManager : MonoBehaviour {
 
 		path = path.Replace ("\\", "/");
 
-		Piece piece = new Piece ();
+		List<Piece> listPiecesTmp = new List<Piece> ();
 
 		XmlTextReader myXmlTextReader = new XmlTextReader(path);
 		
 		while (myXmlTextReader.Read())
 		{
+			Piece piece = new Piece ();
+
 			if(myXmlTextReader.IsStartElement()){
 				if (myXmlTextReader.Name == "piece")
 				{
@@ -50,17 +60,21 @@ public class LabyrintheManager : MonoBehaviour {
 					piece.rotY = float.Parse(myXmlTextReader.GetAttribute("rotY"));
 					piece.mur = myXmlTextReader.GetAttribute("mur");
 
-					listPieces.Add(piece);
+					piece.prefab = Resources.Load<GameObject>("Pieces/" + piece.name) as GameObject;
+
+					listPiecesTmp.Add (piece);
 				}
 			}
 		}
 		
 		myXmlTextReader.Close();
+		listPieces = new Piece[listPiecesTmp.Count];
+		listPieces = listPiecesTmp.ToArray ();
 
 		//Show all the pieces in the console
-		/*foreach (Piece p in listPieces) {
-			Debug.Log(p.id + " " + p.name);
-		}*/
+		foreach (Piece p in listPieces) {
+			Debug.Log(p.ToString());
+		}
 	}
 
 	public void LoadLevel(int idLevel){
@@ -70,49 +84,64 @@ public class LabyrintheManager : MonoBehaviour {
 		path = path.Replace ("\\", "/");
 		
 		Level level = new Level();
+		bool levelFind = false;
 		
 		XmlTextReader myXmlTextReader = new XmlTextReader(path);
 		
 		while (myXmlTextReader.Read())
 		{
 			if(myXmlTextReader.IsStartElement()){
-				if (myXmlTextReader.Name == "level")
+				if (myXmlTextReader.Name == "level" && int.Parse(myXmlTextReader.GetAttribute("id")) == idLevel)
 				{
-					int id = int.Parse(myXmlTextReader.GetAttribute("id"));
-					if(id != idLevel)
-						continue;
-
-					level.id = id;
+					//Level name & id //////////////////////////////////////
+					level.id = int.Parse(myXmlTextReader.GetAttribute("id"));
 					level.name = myXmlTextReader.GetAttribute("name");
-				}else if (myXmlTextReader.Name == "posBille")
-				{
+
+					//PosBille at the beginning /////////////////////////////
+					myXmlTextReader.ReadToFollowing("posBille");
 					float x = float.Parse(myXmlTextReader.GetAttribute("x"));
 					float y = float.Parse(myXmlTextReader.GetAttribute("y"));
 					float z = float.Parse(myXmlTextReader.GetAttribute("z"));
-
 					level.posBille.Set(x,y,z);
-				}else if (myXmlTextReader.Name == "labyrinthe")
-				{
+
+					//PosExit in the maze /////////////////////////////////
+					myXmlTextReader.ReadToFollowing("posExit");
+					x = float.Parse(myXmlTextReader.GetAttribute("x"));
+					y = float.Parse(myXmlTextReader.GetAttribute("y"));
+					z = float.Parse(myXmlTextReader.GetAttribute("z"));
+					level.posExit.Set(x,y,z);
+
+					//Width, Height and content of the maze /////////////////
+					myXmlTextReader.ReadToFollowing("labyrinthe");
 					level.width = int.Parse(myXmlTextReader.GetAttribute("width"));
 					level.height = int.Parse(myXmlTextReader.GetAttribute("height"));
-
-					string lab = myXmlTextReader.ReadString();
+	
+					string lab = myXmlTextReader.ReadElementContentAsString();
 					level.labyrinthe = lab.Split(Level.charSeparator[0]);
-				}else if (myXmlTextReader.Name == "time")
-				{
+
+					//Time medals ///////////////////////////////////////////
+					myXmlTextReader.ReadToFollowing("time"); 
 					level.timeGold = float.Parse(myXmlTextReader.GetAttribute("gold"));
 					level.timeSilver = float.Parse(myXmlTextReader.GetAttribute("silver"));
 					level.timeBronze = float.Parse(myXmlTextReader.GetAttribute("bronze"));
+
+					levelFind = true;
 				}
 			}
+
+			if(levelFind)
+				break;
 		}
 		
 		myXmlTextReader.Close();
 
-		if(level.id == idLevel)
+		if(level.id == idLevel){
 			currentLevel = level;
-		else
+			Debug.Log (currentLevel.ToString ());
+		}else{
 			Debug.LogError("Impossible de charger le Labyrinthe n°" + idLevel);
+			return;
+		}
 	}
 
 	private string SearchPath(string folder, string contains){
@@ -131,7 +160,50 @@ public class LabyrintheManager : MonoBehaviour {
 		return "";
 	}
 
-	public void CheckIfFolderDocsExist(){
+	private void GenerateLabyrinthe(){
+		if (currentLevel == null) {
+			Debug.LogError("Le level courant n'a pas été chargé, impossible de générer le labyrinthe.");
+			return;
+		}
+
+		if (currentLevel.labyrinthe.Length != currentLevel.width * currentLevel.height) {
+			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Nb pièces : " + currentLevel.labyrinthe.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
+			return;
+		}
+		//Add walls
+		GameObject wall = GameObject.CreatePrimitive (PrimitiveType.Cube);
+		//wall.transform.SetParent (plateau.transform);
+		wall.transform.localScale = new Vector3(currentLevel.width * sizePiece, 3f, 1f);
+		wall.transform.position = new Vector3(0f, 0f,(currentLevel.width / 2f) * sizePiece + 0.5f);
+		for (int index = 1; index < 4; index++) {
+			GameObject w = Instantiate(wall) as GameObject;
+			w.transform.RotateAround(Vector3.zero, new Vector3(0f,1f,0f), index * 90f);
+		}
+
+		//Add pieces
+		int i;
+		float posX = - (currentLevel.width / 2) * sizePiece;
+		float posZ = (currentLevel.height / 2) * sizePiece;
+		for (int z = 0; z < currentLevel.height; z++) {
+			for(int x = 0 ; x < currentLevel.width ; x++) {
+				i = int.Parse(currentLevel.labyrinthe[z * currentLevel.width + x]);
+				GameObject go = GameObject.Instantiate(listPieces[i].prefab, new Vector3(posX, 0f, posZ), Quaternion.Euler(new Vector3(0f, listPieces[i].rotY, 0f))) as GameObject;
+				go.transform.SetParent(plateau.transform);
+
+				posX += sizePiece;
+			}
+			posZ -= sizePiece;
+			posX = -(currentLevel.width / 2) * sizePiece;
+		}
+		//Add exit
+		GameObject go_exit = GameObject.Instantiate (exit, currentLevel.posExit, Quaternion.identity) as GameObject;
+		go_exit.transform.SetParent(plateau.transform);
+
+		//Add sphere
+		GameObject.Instantiate (bille, currentLevel.posBille, Quaternion.identity);
+	}
+
+	public static void CheckIfFolderDocsExist(){
 		if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) {
 			bool folderExist = System.IO.Directory.Exists (Application.dataPath + folderDocs);
 			
