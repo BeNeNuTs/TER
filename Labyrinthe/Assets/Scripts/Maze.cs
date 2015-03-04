@@ -6,17 +6,25 @@ public class Maze : MonoBehaviour {
 	public MazeCell cellPrefab;
 	public float generationStepDelay;
 	public IntVector2 size;
+	public MazePassage passagePrefab;
+	public MazeWall wallPrefab;
 
 	private MazeCell[,] cells;
 
-	// Use this for initialization
-	void Start () {
-
+	private void CreatePassage (MazeCell cell, MazeCell otherCell, MazeDirection direction) {
+		MazePassage passage = Instantiate(passagePrefab) as MazePassage;
+		passage.Initialize(cell, otherCell, direction);
+		passage = Instantiate(passagePrefab) as MazePassage;
+		passage.Initialize(otherCell, cell, direction.GetOpposite());
 	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	private void CreateWall (MazeCell cell, MazeCell otherCell, MazeDirection direction) {
+		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
+		wall.Initialize(cell, otherCell, direction);
+		if (otherCell != null) {
+			wall = Instantiate(wallPrefab) as MazeWall;
+			wall.Initialize(otherCell, cell, direction.GetOpposite());
+		}
 	}
 
 	public MazeCell GetCell (IntVector2 coordinates) {
@@ -30,13 +38,25 @@ public class Maze : MonoBehaviour {
 	private void DoNextGenerationStep (List<MazeCell> activeCells) {
 		int currentIndex = activeCells.Count - 1;
 		MazeCell currentCell = activeCells[currentIndex];
-		MazeDirection direction = MazeDirections.RandomValue;
+		if (currentCell.IsFullyInitialized) {
+			activeCells.RemoveAt(currentIndex);
+			return;
+		}
+		MazeDirection direction = currentCell.RandomUninitializedDirection;
 		IntVector2 coordinates = currentCell.coordinates + direction.ToIntVector2();
-		if (ContainsCoordinates(coordinates) && GetCell(coordinates) == null) {
-			activeCells.Add(CreateCell(coordinates));
+		if (ContainsCoordinates(coordinates)) {
+			MazeCell neighbor = GetCell(coordinates);
+			if (neighbor == null) {
+				neighbor = CreateCell(coordinates);
+				CreatePassage(currentCell, neighbor, direction);
+				activeCells.Add(neighbor);
+			}
+			else {
+				CreateWall(currentCell, neighbor, direction);
+			}
 		}
 		else {
-			activeCells.RemoveAt(currentIndex);
+			CreateWall(currentCell, null, direction);
 		}
 	}
 
