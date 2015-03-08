@@ -1,14 +1,26 @@
 <levels>
-	<level id="1" name="LabyCube">
+	<level id="1" img="" name="LabyCube">
 		<posBille x="0" y="1" z="0"></posBille>
 		<posExit x="5" y="1" z="5"></posExit>
 		<labyrinthe width="5" height="5">1-2-0-1-0-1-2-1-1-1-0-0-0-1-2-1-2-1-0-2-2-2-1-1-0</labyrinthe>
 		<time gold="20" silver="15" bronze="10"></time>
 	</level>
-	<level id="2" name="LabyLoL">
-		<posBille x="0" y="1" z="0"></posBille>
+	<level id="2" img="" name="LabyLoL">
+		<posBille x="3" y="1" z="0"></posBille>
 		<posExit x="0" y="1" z="0"></posExit>
 		<labyrinthe width="5" height="5">1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1</labyrinthe>
+		<time gold="20" silver="15" bronze="10"></time>
+	</level>
+	<level id="3" img="" name="LabyLoL">
+		<posBille x="0" y="1" z="3"></posBille>
+		<posExit x="0" y="1" z="0"></posExit>
+		<labyrinthe width="5" height="5">1-2-2-1-1-2-1-1-2-1-1-1-1-1-1-2-1-1-1-2-1-1-1-1-2</labyrinthe>
+		<time gold="20" silver="15" bronze="10"></time>
+	</level>
+	<level id="4" img="" name="LabyLoL">
+		<posBille x="3" y="1" z="3"></posBille>
+		<posExit x="0" y="1" z="0"></posExit>
+		<labyrinthe width="5" height="5">2-2-2-1-1-2-1-1-1-2-1-1-2-1-1-2-1-2-2-2-1-2-1-1-1</labyrinthe>
 		<time gold="20" silver="15" bronze="10"></time>
 	</level>
 </levels>

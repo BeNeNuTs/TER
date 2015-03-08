@@ -7,6 +7,8 @@ using System;
 
 public class LabyrintheManager : MonoBehaviour {
 
+	//private static LabyrintheManager labyrintheManager = null;
+
 	public static string folderDocs = "/Documents";
 	public static string folderLevels = "/Levels";
 	public static string folderPieces = "/Pieces";
@@ -22,15 +24,20 @@ public class LabyrintheManager : MonoBehaviour {
 	public GameObject exit;
 	
 	void Awake(){
-		DontDestroyOnLoad (gameObject);
+		/*if(labyrintheManager == null)
+			labyrintheManager = this;
+		else if(labyrintheManager != this)
+			Destroy(gameObject);
+
+		DontDestroyOnLoad (gameObject);*/
 	
 		plateau = GameObject.Find ("Plateau");
 		currentLevel = null;
 
-		LoadPieces ();
-		LoadLevel (1);
+		//LoadPieces ();
+		//currentLevel = LoadLevel (GetLevelXML(), 1);
 
-		GenerateLabyrinthe ();
+		//GenerateLabyrinthe (1);
 	}
 
 	public void LoadPieces(){
@@ -77,16 +84,18 @@ public class LabyrintheManager : MonoBehaviour {
 		}
 	}
 
-	public void LoadLevel(int idLevel){
+	public static XmlTextReader GetLevelXML(){
 		CheckIfFolderDocsExist ();
-
+		
 		string path = SearchPath (folderLevels, "levels");
 		path = path.Replace ("\\", "/");
 		
+		return new XmlTextReader(path);
+	}
+
+	public void LoadLevel(XmlTextReader myXmlTextReader, int idLevel){
 		Level level = new Level();
 		bool levelFind = false;
-		
-		XmlTextReader myXmlTextReader = new XmlTextReader(path);
 		
 		while (myXmlTextReader.Read())
 		{
@@ -140,18 +149,17 @@ public class LabyrintheManager : MonoBehaviour {
 			Debug.Log (currentLevel.ToString ());
 		}else{
 			Debug.LogError("Impossible de charger le Labyrinthe n°" + idLevel);
-			return;
 		}
 	}
 
-	private string SearchPath(string folder, string contains){
+	public static string SearchPath(string folder, string file){
 		string [] path;
 
 		path = Directory.GetFiles (Application.dataPath + folderDocs + folder);
 		
 		foreach(string str in path){
 			if(str.EndsWith(".xml")){
-				if(str.Contains(contains)){
+				if(str.Contains(file)){
 					return str;
 				}
 			}
@@ -160,11 +168,9 @@ public class LabyrintheManager : MonoBehaviour {
 		return "";
 	}
 
-	private void GenerateLabyrinthe(){
-		if (currentLevel == null) {
-			Debug.LogError("Le level courant n'a pas été chargé, impossible de générer le labyrinthe.");
-			return;
-		}
+	public void GenerateLabyrinthe(int level){
+		LoadPieces ();
+		LoadLevel(LabyrintheManager.GetLevelXML(), level);
 
 		if (currentLevel.labyrinthe.Length != currentLevel.width * currentLevel.height) {
 			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Nb pièces : " + currentLevel.labyrinthe.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
