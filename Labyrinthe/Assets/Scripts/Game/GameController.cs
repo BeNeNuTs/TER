@@ -16,9 +16,11 @@ public class GameController : MonoBehaviour {
 	private bool inPause = false;
 
 	private float playerTime;
+	private int playerDie = 0;
 
 	void Start() {
 		levelText.text += levelName;
+		ResetDie ();
 	}
 
 	// Update is called once per frame
@@ -33,22 +35,6 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public void QuitTheGame(){
-		if(Application.isEditor){
-			Debug.Break();
-		}else{
-			Application.Quit ();
-		}
-	}
-
-	public void NextLevel(){
-		print ("Next Level");
-	}
-	
-	public void Continue(){
-		TogglePauseMenu();
-	}
-
 	private void TogglePauseMenu(){
 		if (inPause) {
 			inPause = false;
@@ -61,6 +47,23 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	public void QuitTheGame(){
+		if(Application.isEditor){
+			Debug.Break();
+		}else{
+			Application.Quit ();
+		}
+	}
+
+	public void NextLevel(){
+		//TODO
+		print ("Next Level");
+	}
+	
+	public void Continue(){
+		TogglePauseMenu();
+	}
+
 	public void ShowScore() {
 		tabScore.GetComponent<TabScore> ().GenerateScore (playerTime, 0f);
 		tabScore.SetActive (true);
@@ -70,6 +73,14 @@ public class GameController : MonoBehaviour {
 		levelComplete = true;
 		playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
 		timeText.text = "Time : " + playerTime;
+	}
+
+	public void IncreaseDie(){
+		playerDie++;
+	}
+
+	public void ResetDie(){
+		playerDie = 0;
 	}
 
 	public static float RoundValue(float num, float precision)

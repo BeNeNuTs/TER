@@ -1,0 +1,5 @@
+<pieces>
+	<piece id="0" name="Croix" rotY="0" mur="2-5-8-11"></piece>
+	<piece id="1" name="Barre" rotY="0" mur="5-11"></piece>
+	<piece id="2" name="Barre" rotY="90" mur="2-8"></piece>
+</pieces>
