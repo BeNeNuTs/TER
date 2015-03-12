@@ -14,13 +14,6 @@ public class MenuController : MonoBehaviour {
 
 	public float timeTransition = 2f;
 
-	public struct IconStruct
-	{
-		public int id;
-		public Sprite img;
-		public string name;
-	};
-
 	void Awake(){
 		Debug.Log("Screen : width = " + Screen.width + " height = " + Screen.height);
 
@@ -32,45 +25,6 @@ public class MenuController : MonoBehaviour {
 		options.SetActive(false);
 		options.transform.position = new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0);
 
-
-		//Load level icons
-		CreateAllLevelIcons(LabyrintheManager.GetLevelXML());
-	}
-
-	public void CreateAllLevelIcons(XmlTextReader myXmlTextReader){
-		ArrayList levelsIcon = new ArrayList();
-		
-		while (myXmlTextReader.Read())
-		{
-			if(myXmlTextReader.IsStartElement()){
-				if (myXmlTextReader.Name == "level")
-				{
-					//Level id //////////////////////////////////////
-					IconStruct icon;
-					icon.id = int.Parse(myXmlTextReader.GetAttribute("id"));
-					string imgPath = myXmlTextReader.GetAttribute("img");
-					icon.name = myXmlTextReader.GetAttribute("name");
-
-					icon.img = Resources.Load<Sprite>(imgPath) as Sprite;
-
-					levelsIcon.Add(icon);
-				}
-			}
-		}
-		
-		myXmlTextReader.Close();
-
-		for(int i = 0 ; i < levelsIcon.Count ; i++)	
-			Debug.Log(levelsIcon[i]);
-
-		if(levelsIcon.Count != tabIcon.Length){
-			Debug.LogError("Nombre de levels != du nombre d'icon dans le menu : nbLevel : " + levelsIcon.Count + " nbIcon : " + tabIcon.Length);
-			return;
-		}
-
-		/*for(int i = 0 ; i < tabIcon.Length ; i++){
-			tabIcon[i].GetComponent<Icon>().id = levelsIcon[i];
-		}*/
 	}
 
 

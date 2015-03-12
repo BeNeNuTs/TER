@@ -18,7 +18,8 @@ public class PlateauController : MonoBehaviour {
 
 		clamp ();
 
-		rigidbody.MoveRotation(Quaternion.Euler(rotation));
+		//rigidbody.MoveRotation(Quaternion.Euler(rotation));
+		transform.localRotation = Quaternion.Euler(rotation);
 	}
 
 	private void clamp() {

@@ -5,8 +5,9 @@ public class Level {
 
 	public int id;
 	public string name;
-	public Vector3 posBille;
-	public Vector3 posExit;
+	public string img;
+	public IntVector2 posBille;
+	public IntVector2 posExit;
 
 	public int width;
 	public int height;
@@ -22,8 +23,9 @@ public class Level {
 	public Level(){
 		this.id = 0;
 		this.name = "";
-		this.posBille = Vector3.zero;
-		this.posExit = Vector3.zero;
+		this.img = "";
+		this.posBille = new IntVector2();
+		this.posExit = new IntVector2();
 		this.width = 0;
 		this.height = 0;
 		this.labyrinthe = null;
@@ -32,9 +34,10 @@ public class Level {
 		this.timeBronze = 0f;
 	}
 
-	public Level(int id, string name, Vector3 posBille, Vector3 posExit, int width, int height, string labyrinthe, float timeGold, float timeSilver, float timeBronze){
+	public Level(int id, string name, string img, IntVector2 posBille, IntVector2 posExit, int width, int height, string labyrinthe, float timeGold, float timeSilver, float timeBronze){
 		this.id = id;
 		this.name = name;
+		this.img = img;
 		this.posBille = posBille;
 		this.posExit = posExit;
 		this.width = width;

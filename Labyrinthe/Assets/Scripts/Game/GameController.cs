@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GameController : MonoBehaviour {
 
-	public string levelName;
+	public static string levelName;
 
 	public Text levelText;
 	public Text timeText;

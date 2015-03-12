@@ -4,6 +4,7 @@ using System.Collections;
 public class LevelManager : MonoBehaviour {
 
 	private static LevelManager levelManager = null;
+	private static int levelMaze = 1;
 
 	public static int levelToLoad = -1;
 	
@@ -19,16 +20,22 @@ public class LevelManager : MonoBehaviour {
 	public static void setLevelToLoad (int level) {
 		levelToLoad = level;
 		Debug.Log("LevelToLoad = " + level);
-		Application.LoadLevel("loadPieces");
+		Application.LoadLevel(levelMaze);
 	}
 
 	void OnLevelWasLoaded(int level) {
-		if(level == 1){
+		if(level == levelMaze){
 			if(levelToLoad < 0){
 				Debug.LogError("Erreur levelToLoad < 0");
 				return;
 			}
-			GameObject.Find("LabyrintheManager").GetComponent<LabyrintheManager>().GenerateLabyrinthe(levelToLoad);
+			GameObject labManager = GameObject.Find("LabyrintheManager");
+			if(labManager != null){
+				labManager.GetComponent<LabyrintheManager>().GenerateLabyrinthe(levelToLoad);
+			}else{
+				Debug.LogError("Erreur : Impossible de trouver LabyrintheManager.");
+			}
+
 			levelToLoad = -1;
 		}
 	}
