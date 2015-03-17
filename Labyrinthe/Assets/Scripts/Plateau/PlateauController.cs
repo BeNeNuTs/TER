@@ -22,6 +22,10 @@ public class PlateauController : MonoBehaviour {
 		transform.localRotation = Quaternion.Euler(rotation);
 	}
 
+	public void ResetRotation(){
+		rotation = Vector3.zero;
+	}
+
 	private void clamp() {
 		if (rotation.x > offset) {
 			rotation = new Vector3(offset, 0f, rotation.z);

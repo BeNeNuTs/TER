@@ -60,6 +60,59 @@ public class Maze : MonoBehaviour {
 		}
 	}
 
+	public IEnumerator GenerateLevel(Level level){
+		IntVector2 _size = new IntVector2(level.width, level.height);
+		size = _size;
+		cells = new MazeCell[size.x, size.z];
+		List<MazeCell> activeCells = new List<MazeCell>();
+		for(int z = 0 ; z < size.z ; z++){
+			for(int x = 0 ; x < size.x ; x++){
+				MazeCell c = CreateCell(new IntVector2(x,z));
+				activeCells.Add(c);
+				if(z == 0){
+					CreateWall(c, null, MazeDirection.South);
+				}else if(z == size.z - 1){
+					CreateWall(c, null, MazeDirection.North);
+				}
+
+				if(x == 0){
+					CreateWall(c, null, MazeDirection.West);
+				}else if(x == size.x - 1){
+					CreateWall(c, null, MazeDirection.East);
+				}
+			}
+		}
+
+		string [] line;
+		string [] column;
+		for(int x = 0 ; x < level.lines.Length ; x++){
+			line = level.lines[x].Split('-');
+			if(line.Length + 1 != size.x){
+				Debug.LogError("Nombre de mur insuffisant par rapport à la taille du labyrinthe : line");
+				yield return null;
+			}
+			
+			for(int i = 0 ; i < line.Length ; i++){
+				if(line[i] == "1"){
+					CreateWall(activeCells[x * size.x + i], activeCells[x * size.x + i+1], MazeDirection.East);
+				}
+			}
+		}
+		for(int z = 0 ; z < level.columns.Length ; z++){
+			column = level.columns[z].Split('-');
+			if(column.Length + 1 != size.z){
+				Debug.LogError("Nombre de mur insuffisant par rapport à la taille du labyrinthe : colum");
+				yield return null;
+			}
+
+			for(int i = 0 ; i < column.Length ; i++){
+				if(column[i] == "1"){
+					CreateWall(activeCells[i * size.x + z], activeCells[(i+1) * size.x + z], MazeDirection.North);
+				}
+			}
+		}
+	}
+
 	public void GenerateNoCoroutine (IntVector2 _size) {
 		size = _size;
 		WaitForSeconds delay = new WaitForSeconds(generationStepDelay);

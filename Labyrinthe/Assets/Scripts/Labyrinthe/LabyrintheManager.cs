@@ -15,8 +15,7 @@ public class LabyrintheManager : MonoBehaviour {
 	public static string folderSave = "/Save";
 
 	private Level currentLevel;
-
-	public GameObject plateau;
+	
 	public GameObject bille;
 	public GameObject exit;
 
@@ -24,6 +23,7 @@ public class LabyrintheManager : MonoBehaviour {
 
 	void Start(){
 		currentLevel = null;
+		//GenerateLabyrinthe(1);
 	}
 
 	public static XmlTextReader GetLevelXML(){
@@ -65,9 +65,14 @@ public class LabyrintheManager : MonoBehaviour {
 					myXmlTextReader.ReadToFollowing("labyrinthe");
 					level.width = int.Parse(myXmlTextReader.GetAttribute("width"));
 					level.height = int.Parse(myXmlTextReader.GetAttribute("height"));
-	
-					string lab = myXmlTextReader.ReadElementContentAsString();
-					level.labyrinthe = lab.Split(Level.charSeparator[0]);
+
+					myXmlTextReader.ReadToFollowing("lines");
+					string lines = myXmlTextReader.ReadElementContentAsString();
+					level.lines = lines.Split(Level.charSeparator[0]);
+
+					myXmlTextReader.ReadToFollowing("columns");
+					string columns = myXmlTextReader.ReadElementContentAsString();
+					level.columns = columns.Split(Level.charSeparator[0]);
 
 					//Time medals ///////////////////////////////////////////
 					myXmlTextReader.ReadToFollowing("time"); 
@@ -86,7 +91,7 @@ public class LabyrintheManager : MonoBehaviour {
 		myXmlTextReader.Close();
 
 		if(level.id == idLevel){
-			Debug.Log (level.ToString ());
+			//Debug.Log (level.ToString ());
 			return level;
 		}else{
 			Debug.LogError("Impossible de charger le Labyrinthe n°" + idLevel);
@@ -111,6 +116,8 @@ public class LabyrintheManager : MonoBehaviour {
 	}
 
 	public void GenerateLabyrinthe(int level){
+		Debug.Log("ici");
+
 		currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
 
 		/*if (currentLevel.labyrinthe.Length != currentLevel.width * currentLevel.height) {
@@ -119,10 +126,11 @@ public class LabyrintheManager : MonoBehaviour {
 		}*/
 
 		GameController.levelName = currentLevel.name;
-		maze.GenerateNoCoroutine(new IntVector2(currentLevel.width, currentLevel.height));
+		StartCoroutine(maze.GenerateLevel(currentLevel));
 		bille = Instantiate(bille) as GameObject;
-		bille.transform.position = new Vector3(maze.GetCell(new IntVector2(0,0)).transform.position.x, 1, maze.GetCell(new IntVector2(0,0)).transform.position.z);
-	
+		bille.transform.position = new Vector3(maze.GetCell(new IntVector2(0,0)).transform.position.x, 0.4f, maze.GetCell(new IntVector2(0,0)).transform.position.z);
+		bille.transform.parent = maze.transform;
+
 		exit = Instantiate(exit) as GameObject;
 		exit.transform.position = new Vector3(maze.GetCell(new IntVector2(currentLevel.width - 1,currentLevel.height - 1)).transform.position.x, 1, maze.GetCell(new IntVector2(currentLevel.width - 1,currentLevel.height - 1)).transform.position.z);
 		exit.transform.parent = maze.transform;

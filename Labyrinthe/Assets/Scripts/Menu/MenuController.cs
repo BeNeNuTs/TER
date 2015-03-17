@@ -10,9 +10,7 @@ public class MenuController : MonoBehaviour {
 	public GameObject levels;
 	public GameObject options;
 
-	public GameObject [] tabIcon;
-
-	public float timeTransition = 2f;
+	public float timeTransition = 1f;
 
 	void Awake(){
 		Debug.Log("Screen : width = " + Screen.width + " height = " + Screen.height);
@@ -61,12 +59,11 @@ public class MenuController : MonoBehaviour {
 		iTween.MoveTo(options, iTween.Hash("position", new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
 	}
 
-	public void Quit(){
-		Debug.Log("Quit");
+	public void GoToEditor(){
+		Application.LoadLevel("editor");
+	}
 
-		if(Application.isEditor)
-			Debug.Break();
-		else
-			Application.Quit();
+	public void Quit(){
+		GameController.QuitTheGame();
 	}
 }

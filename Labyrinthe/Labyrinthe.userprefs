@@ -1,15 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Labyrinthe\Maze.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Labyrinthe\LabyrintheManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\Labyrinthe\Maze.cs" Line="72" Column="3" />
-      <File FileName="Assets\Scripts\Labyrinthe\LabyrintheManager.cs" Line="131" Column="46" />
-      <File FileName="Assets\Scripts\Menu\Icon.cs" Line="36" Column="17" />
-      <File FileName="Assets\Scripts\Labyrinthe\Levels\Level.cs" Line="37" Column="79" />
-      <File FileName="Assets\Scripts\Labyrinthe\IntVector2.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\LevelManager.cs" Line="24" Column="3" />
-      <File FileName="Assets\Scripts\Game\GameController.cs" Line="7" Column="33" />
-      <File FileName="Assets\Scripts\Plateau\PlateauController.cs" Line="22" Column="56" />
+      <File FileName="Assets\Scripts\Game\GameController.cs" Line="68" Column="24" />
+      <File FileName="Assets\Scripts\Plateau\PlateauController.cs" Line="26" Column="27" />
+      <File FileName="Assets\Scripts\MEditor\EditorController.cs" Line="36" Column="33" />
+      <File FileName="Assets\Scripts\Labyrinthe\LabyrintheManager.cs" Line="105" Column="50" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

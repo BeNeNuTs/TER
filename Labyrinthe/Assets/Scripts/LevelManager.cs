@@ -31,6 +31,7 @@ public class LevelManager : MonoBehaviour {
 			}
 			GameObject labManager = GameObject.Find("LabyrintheManager");
 			if(labManager != null){
+				Debug.Log("Here");
 				labManager.GetComponent<LabyrintheManager>().GenerateLabyrinthe(levelToLoad);
 			}else{
 				Debug.LogError("Erreur : Impossible de trouver LabyrintheManager.");

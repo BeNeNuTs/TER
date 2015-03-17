@@ -47,12 +47,25 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public void QuitTheGame(){
+	public void Quit(){
+		GameController.QuitTheGame();
+	}
+
+	public static void QuitTheGame(){
 		if(Application.isEditor){
 			Debug.Break();
 		}else{
 			Application.Quit ();
 		}
+	}
+
+	public void Back(){
+		GameController.BackToMenu();
+	}
+
+	public static void BackToMenu(){
+		Time.timeScale = 1f;
+		Application.LoadLevel("menu");
 	}
 
 	public void NextLevel(){

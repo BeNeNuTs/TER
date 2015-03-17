@@ -2,18 +2,18 @@
 using System.Collections;
 
 public class CameraFollow : MonoBehaviour {
-
-	public Transform target;
+	
 	public float smoothing = 5f;
+	public Vector3 offset;
 
-	Vector3 offset;
-
-	void Start() {
-		offset = transform.position - target.position;
-	}
+	private GameObject target;
 
 	void FixedUpdate() {
-		Vector3 targetCamPos = target.position + offset;
+		if(target == null){
+			target = GameObject.FindGameObjectWithTag("Player") as GameObject;
+		}
+
+		Vector3 targetCamPos = target.transform.position + offset;
 		transform.position = Vector3.Lerp (transform.position, targetCamPos, smoothing * Time.deltaTime);
 	}
 }
