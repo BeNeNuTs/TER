@@ -3,16 +3,15 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 	public Maze mazePrefab;
-	private Maze mazeInstance;
 
 	private void BeginGame(){
-		mazeInstance = Instantiate(mazePrefab) as Maze;
-		StartCoroutine (mazeInstance.Generate());
+		//StartCoroutine (mazePrefab.GenerateWithCoroutine());
+		mazePrefab.GenerateNoCoroutine ();
 	}
 	
 	private void RestartGame(){
-		StopAllCoroutines ();
-		Destroy(mazeInstance.gameObject);
+		//StopAllCoroutines ();
+		Destroy(mazePrefab.gameObject);
 		BeginGame();
 	}
 

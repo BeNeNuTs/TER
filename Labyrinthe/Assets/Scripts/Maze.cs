@@ -60,7 +60,16 @@ public class Maze : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator Generate () {
+	public void GenerateNoCoroutine () {
+		cells = new MazeCell[size.x, size.z];
+		List<MazeCell> activeCells = new List<MazeCell>();
+		DoFirstGenerationStep(activeCells);
+		while (activeCells.Count > 0) {
+			DoNextGenerationStep(activeCells);
+		}
+	}
+
+	public IEnumerator GenerateWithCoroutine () {
 		WaitForSeconds delay = new WaitForSeconds(generationStepDelay);
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell>();
