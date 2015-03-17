@@ -3,10 +3,12 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 	public Maze mazePrefab;
-
+	private DeadEndFilling DEF;
+	
 	private void BeginGame(){
 		//StartCoroutine (mazePrefab.GenerateWithCoroutine());
 		mazePrefab.GenerateNoCoroutine ();
+		DEF.deadEndFilling (mazePrefab);
 	}
 	
 	private void RestartGame(){
@@ -17,6 +19,7 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	private void Start () {
+		DEF = GetComponent<DeadEndFilling> ();
 		BeginGame ();
 	}
 	
