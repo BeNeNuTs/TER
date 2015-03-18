@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	private void BeginGame(){
 		//StartCoroutine (mazePrefab.GenerateWithCoroutine());
 		mazePrefab.GenerateNoCoroutine ();
+		//StartCoroutine (DEF.deadEndFillingWithCoroutine (mazePrefab));
 		DEF.deadEndFilling (mazePrefab);
 	}
 	
