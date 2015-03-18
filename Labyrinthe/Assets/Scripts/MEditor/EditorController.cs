@@ -8,20 +8,26 @@ public class EditorController : MonoBehaviour {
 	public Slider heightSlider;
 
 	public Button saveButton;
+	public Button solveButton;
 
 	public GameObject mazeGameObject;
 
 	private Maze maze;
 	private PlateauController plateauScript;
+	private DeadEndFilling deadEndScript;
 
 	void Start(){
 		maze = mazeGameObject.GetComponent<Maze>();
 		plateauScript = mazeGameObject.GetComponent<PlateauController>();
+		deadEndScript = GetComponent<DeadEndFilling>();
 	}
 
 	public void Generate(){
 		if(!saveButton.IsInteractable()){
 			saveButton.interactable = true;
+		}
+		if(!solveButton.IsInteractable()){
+			solveButton.interactable = true;
 		}
 
 		//Supprimer l'ancien labyrinthe généré
@@ -44,6 +50,10 @@ public class EditorController : MonoBehaviour {
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
 		iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", new Vector3(Camera.main.transform.position.x,max + max/4f,Camera.main.transform.position.z), "time", 2f));
+	}
+
+	public void Solve(){
+		deadEndScript.deadEndFilling(maze, new IntVector2(0,0), new IntVector2(maze.size.x - 1, maze.size.z - 1));
 	}
 
 	public void Save(){
