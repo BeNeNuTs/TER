@@ -119,13 +119,15 @@ public class LabyrintheManager : MonoBehaviour {
 		Debug.Log("ici");
 
 		currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
+		if(currentLevel == null)
+			return;
 
 		/*if (currentLevel.labyrinthe.Length != currentLevel.width * currentLevel.height) {
 			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Nb pièces : " + currentLevel.labyrinthe.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
 			return;
 		}*/
 
-		GameController.levelName = currentLevel.name;
+		GameController.currentLevel = currentLevel;
 		StartCoroutine(maze.GenerateLevel(currentLevel));
 		bille = Instantiate(bille) as GameObject;
 		bille.transform.position = new Vector3(maze.GetCell(new IntVector2(0,0)).transform.position.x, 0.4f, maze.GetCell(new IntVector2(0,0)).transform.position.z);
@@ -147,6 +149,12 @@ public class LabyrintheManager : MonoBehaviour {
 		} else {
 			Debug.LogError("Platform non prise en charge " + Application.platform);
 			return;
+		}
+	}
+
+	public int LevelId {
+		get {
+			return currentLevel.id;
 		}
 	}
 

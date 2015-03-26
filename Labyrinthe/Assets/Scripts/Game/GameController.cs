@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GameController : MonoBehaviour {
 
-	public static string levelName;
+	public static Level currentLevel;
 
 	public Text levelText;
 	public Text timeText;
@@ -12,15 +12,15 @@ public class GameController : MonoBehaviour {
 	public GameObject tabScore;
 	public GameObject pauseMenu;
 
-	private bool levelComplete = false;
+	[HideInInspector]
+	public bool levelComplete = false;
 	private bool inPause = false;
+	private bool inGlobalView = false;
 
 	private float playerTime;
-	private int playerDie = 0;
 
 	void Start() {
-		levelText.text += levelName;
-		ResetDie ();
+		levelText.text += currentLevel.name;
 	}
 
 	// Update is called once per frame
@@ -28,6 +28,9 @@ public class GameController : MonoBehaviour {
 
 		if (Input.GetButtonDown("Cancel")) {
 			TogglePauseMenu();
+		}else if (Input.GetButtonDown("Submit")) {
+			Debug.Log("Toggle");
+			ToggleView();
 		}
 
 		if (!levelComplete) {
@@ -36,6 +39,9 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void TogglePauseMenu(){
+		if(levelComplete)
+			return;
+
 		if (inPause) {
 			inPause = false;
 			Time.timeScale = 1f;
@@ -47,6 +53,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	//Méthode à appeler avec les boutons
 	public void Quit(){
 		GameController.QuitTheGame();
 	}
@@ -69,8 +76,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void NextLevel(){
-		//TODO
-		print ("Next Level");
+		LevelManager.setLevelToLoad((currentLevel.id + 1) % 4);
 	}
 	
 	public void Continue(){
@@ -78,8 +84,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void ShowScore() {
-		tabScore.GetComponent<TabScore> ().GenerateScore (playerTime, 0f);
 		tabScore.SetActive (true);
+		tabScore.GetComponent<TabScore> ().GenerateScore (currentLevel, playerTime);
 	}
 
 	public void LevelComplete(){
@@ -88,12 +94,35 @@ public class GameController : MonoBehaviour {
 		timeText.text = "Time : " + playerTime;
 	}
 
-	public void IncreaseDie(){
-		playerDie++;
+	public void ToggleView(){
+		if(inGlobalView){
+			SetLocalView();
+		}else{
+			SetGlobalView();
+		}
 	}
 
-	public void ResetDie(){
-		playerDie = 0;
+	private void SetGlobalView(){
+		iTween.Stop();
+
+		inGlobalView = true;
+
+		CameraFollow cameraFollowScript = Camera.main.GetComponent<CameraFollow>();
+		if(cameraFollowScript != null){
+			cameraFollowScript.enabled = false;
+		}
+		EditorController.SetGlobalView(currentLevel.width, currentLevel.height);
+	}
+
+	private void SetLocalView(){
+		iTween.Stop();
+
+		inGlobalView = false;
+
+		CameraFollow cameraFollowScript = Camera.main.GetComponent<CameraFollow>();
+		if(cameraFollowScript != null){
+			cameraFollowScript.enabled = true;
+		}
 	}
 
 	public static float RoundValue(float num, float precision)

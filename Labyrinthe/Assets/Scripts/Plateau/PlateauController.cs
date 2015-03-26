@@ -8,8 +8,21 @@ public class PlateauController : MonoBehaviour {
 
 	private Vector3 rotation;
 
+	private GameController gameControllerScript;
+
+	void Start(){
+		GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
+
+		if(gameController != null)
+			gameControllerScript = gameController.GetComponent<GameController>();
+	}
+
 	// Update is called once per frame
 	void FixedUpdate () {
+		if(gameControllerScript != null)
+			if(gameControllerScript.levelComplete)
+				return;
+
 		float h = Input.GetAxisRaw ("Vertical");
 		float v = Input.GetAxisRaw ("Horizontal");
 

@@ -38,21 +38,26 @@ public class EditorController : MonoBehaviour {
 		}
 		//////////////////////////////////////
 
-		//Remettre le labyrinthe en rotation (0,0,0)
-		plateauScript.ResetRotation();
-		maze.transform.rotation = Quaternion.Euler(0,0,0);
+		ResetRotationLabyrinthe();
 
 		//Récupérer le width & height des sliders et générer le labyrinthe
 		int width = Mathf.FloorToInt(widthSlider.value);
 		int height = Mathf.FloorToInt(heightSlider.value);
 		maze.GenerateNoCoroutine(new IntVector2(width, height));
 
+		SetGlobalView(width, height);		
+	}
+
+	public static void SetGlobalView(int width, int height){
+
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
 		iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", new Vector3(Camera.main.transform.position.x,max + max/4f,Camera.main.transform.position.z), "time", 2f));
+		
 	}
 
 	public void Solve(){
+		ResetRotationLabyrinthe();
 		deadEndScript.deadEndFilling(maze, new IntVector2(0,0), new IntVector2(maze.size.x - 1, maze.size.z - 1));
 	}
 
@@ -62,6 +67,12 @@ public class EditorController : MonoBehaviour {
 
 	public void BackToMenu(){
 		GameController.BackToMenu();
+	}
+
+	private void ResetRotationLabyrinthe(){
+		//Remettre le labyrinthe en rotation (0,0,0)
+		plateauScript.ResetRotation();
+		maze.transform.rotation = Quaternion.Euler(0,0,0);
 	}
 
 }
