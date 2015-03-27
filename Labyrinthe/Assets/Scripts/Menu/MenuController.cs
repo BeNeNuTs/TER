@@ -13,7 +13,6 @@ public class MenuController : MonoBehaviour {
 	public float timeTransition = 1f;
 
 	void Awake(){
-		Debug.Log("Screen : width = " + Screen.width + " height = " + Screen.height);
 
 		//Désactiver la vue des levels et la mettre à droite
 		levels.SetActive(false);

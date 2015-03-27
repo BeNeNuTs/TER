@@ -7,8 +7,6 @@ using System;
 
 public class LabyrintheManager : MonoBehaviour {
 
-	//private static LabyrintheManager labyrintheManager = null;
-
 	public static string folderDocs = "/Documents";
 	public static string folderLevels = "/Levels";
 	public static string folderPieces = "/Pieces";
@@ -30,6 +28,15 @@ public class LabyrintheManager : MonoBehaviour {
 		CheckIfFolderDocsExist ();
 		
 		string path = SearchPath (folderLevels, "levels");
+		path = path.Replace ("\\", "/");
+		
+		return new XmlTextReader(path);
+	}
+
+	public static XmlTextReader GetSavedLevelXML(){
+		CheckIfFolderDocsExist ();
+		
+		string path = SearchPath (folderSave, "savedLevels");
 		path = path.Replace ("\\", "/");
 		
 		return new XmlTextReader(path);
@@ -115,13 +122,20 @@ public class LabyrintheManager : MonoBehaviour {
 		return "";
 	}
 
-	public void GenerateLabyrinthe(int level){
+	public void GenerateLabyrinthe(int level, Level.LevelType levelType){
 		Debug.Log("ici");
 
-		currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
+		if(levelType == Level.LevelType.Level)
+			currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
+		else
+			currentLevel = LoadLevel(LabyrintheManager.GetSavedLevelXML(), level);
+
 		if(currentLevel == null)
 			return;
 
+		currentLevel.levelType = levelType;
+
+		/** TODO */
 		/*if (currentLevel.labyrinthe.Length != currentLevel.width * currentLevel.height) {
 			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Nb pièces : " + currentLevel.labyrinthe.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
 			return;

@@ -68,6 +68,7 @@
      <Compile Include="Assets\Scripts\Plateau\PlateauController.cs" />
      <None Include="Assets\Documents\Levels\levels.xml" />
      <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
+     <None Include="Assets\Documents\Save\savedLevels.xml" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

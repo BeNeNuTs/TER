@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Level {
 
+	public enum LevelType { Level, SavedLevel };
+
 	public int id;
 	public string name;
 	public string img;
@@ -18,6 +20,7 @@ public class Level {
 	public float timeGold;
 	public float timeSilver;
 	public float timeBronze;
+	public LevelType levelType;
 
 	public static char [] charSeparator = new char[]{'|'};
 
@@ -34,6 +37,7 @@ public class Level {
 		this.timeGold = 0f;
 		this.timeSilver = 0f;
 		this.timeBronze = 0f;
+		this.levelType = LevelType.Level;
 	}
 	
 	public override string ToString(){

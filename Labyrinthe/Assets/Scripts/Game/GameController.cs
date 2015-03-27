@@ -34,7 +34,7 @@ public class GameController : MonoBehaviour {
 		}
 
 		if (!levelComplete) {
-			timeText.text = "Time : " + RoundValue (Time.timeSinceLevelLoad, 100f);
+			timeText.text = "Temps : " + RoundValue (Time.timeSinceLevelLoad, 100f);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void NextLevel(){
-		LevelManager.setLevelToLoad((currentLevel.id + 1) % 4);
+		LevelManager.setLevelToLoad((currentLevel.id + 1) % 4, currentLevel.levelType);
 	}
 	
 	public void Continue(){
