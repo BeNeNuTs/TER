@@ -17,7 +17,7 @@ public class DeadEndFilling : MonoBehaviour {
 	private int countPassage(int x, int z){
 		int res = 0;
 		for (int i = 0; i != MazeDirections.Count; ++i) {
-			if (m.GetCell (new IntVector2 (x, z)).GetEdge ((MazeDirection) i).name.Contains ("MazePassage"))
+			if (m.GetCell (new IntVector2 (x, z)).GetEdge ((MazeDirection) i).GetType() == typeof(MazePassage))
 				++res;
 		}
 		return res;
@@ -32,16 +32,28 @@ public class DeadEndFilling : MonoBehaviour {
 		deadEnds = new List<IntVector2>();
 	}
 
+	public void clear(){
+		if(m == null){
+			return;
+		}
+
+		for (int i = 0; i != m.size.x; ++i) {
+			for(int j = 0; j != m.size.z; ++j){
+				drawBadPath(i, j, Color.white);
+			}
+		}
+	}
+
 	// Remplit les trous dans le labyrinthe à partir des coordonnées indiquées
 	private void fillMaze(IntVector2 coords){
 		// On vérifie qu'on est pas au début ou à la fin
 		if ((coords.x != start.x || coords.z != start.z) && (coords.x != end.x || coords.z != end.z)) {
 			passageNumber[coords.x,coords.z] -= 1;
-			drawBadPath(coords.x,coords.z, 1f, 0f, 0f);
+			drawBadPath(coords.x,coords.z, new Color(1f,0f,0f));
 
 			// Pour une case remplie, on étend aux couloirs
 			foreach(MazeDirection md in Enum.GetValues(typeof(MazeDirection))){
-				if(m.GetCell(coords).GetEdge(md).name.Contains("MazePassage")){
+				if(m.GetCell(coords).GetEdge(md).GetType() == typeof(MazePassage)){
 					IntVector2 next = m.GetCell(coords).GetEdge(md).otherCell.coordinates;
 					passageNumber[next.x, next.z] -= 1;
 					if(passageNumber[next.x, next.z] == 1)
@@ -51,9 +63,10 @@ public class DeadEndFilling : MonoBehaviour {
 		}
 	}
 
-	private void drawBadPath(int x, int z, float r, float g, float b){
-		m.GetCell (new IntVector2(x,z)).gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = new Color (r, g, b);
+	private void drawBadPath(int x, int z, Color c){
+		m.GetCell (new IntVector2(x,z)).gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = c;
 	}
+
 
 	// Algorithme du dead-end filling
 	public void deadEndFilling(Maze maze, IntVector2 start, IntVector2 end){
@@ -65,7 +78,7 @@ public class DeadEndFilling : MonoBehaviour {
 			for(int j = 0; j != m.size.z; ++j){
 				passageNumber[i,j] = countPassage(i,j);
 				if(passageNumber[i,j] == 1){
-					drawBadPath(i, j, 0f , 0f, 0f);
+					drawBadPath(i, j, new Color(0f,0f,0f));
 					deadEnds.Add(new IntVector2(i,j));
 				}
 			}
@@ -76,7 +89,7 @@ public class DeadEndFilling : MonoBehaviour {
 			fillMaze(de);
 		}
 
-		drawBadPath (start.x, start.z, 0f, 1f, 0f);
-		drawBadPath (end.x, end.z, 0f, 0f, 1f);
+		drawBadPath (start.x, start.z, new Color(0f,1f,0f));
+		drawBadPath (end.x, end.z, new Color(0f,0f,1f));
 	}
 }

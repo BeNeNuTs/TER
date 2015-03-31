@@ -66,6 +66,7 @@
      <Compile Include="Assets\Scripts\Menu\MenuController.cs" />
      <Compile Include="Assets\Scripts\Plateau\ExitController.cs" />
      <Compile Include="Assets\Scripts\Plateau\PlateauController.cs" />
+     <None Include="Assets\Materials\ExitMaterials\Shader\CFXM_MobileParticleAdd_Alpha8.shader" />
      <None Include="Assets\Documents\Levels\levels.xml" />
      <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
      <None Include="Assets\Documents\Save\savedLevels.xml" />

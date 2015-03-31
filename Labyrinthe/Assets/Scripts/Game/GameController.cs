@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour {
 
 	[HideInInspector]
 	public bool levelComplete = false;
+
 	private bool inPause = false;
 	private bool inGlobalView = false;
 

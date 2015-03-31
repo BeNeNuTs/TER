@@ -4,7 +4,7 @@ using System.Collections;
 public class LevelManager : MonoBehaviour {
 
 	private static LevelManager levelManager = null;
-	private static int levelMaze = 1;
+	public static int levelMaze = 1;
 
 	public static int levelToLoad = -1;
 	public static Level.LevelType levelTypeToLoad;
@@ -33,7 +33,6 @@ public class LevelManager : MonoBehaviour {
 			}
 			GameObject labManager = GameObject.Find("LabyrintheManager");
 			if(labManager != null){
-				Debug.Log("Here");
 				labManager.GetComponent<LabyrintheManager>().GenerateLabyrinthe(levelToLoad, levelTypeToLoad);
 			}else{
 				Debug.LogError("Erreur : Impossible de trouver LabyrintheManager.");

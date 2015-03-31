@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <levels>
 	<level id="0" img="img/default" name="Laby5x5">
 		<posBille x="0" y="0"></posBille>
-		<posExit x="5" y="5"></posExit>
+		<posExit x="4" y="4"></posExit>
 		<labyrinthe width="5" height="5">
 			<lines>1-0-0-0|1-1-0-0|0-1-0-1|1-1-1-1|1-0-1-0</lines>
 			<columns>0-0-0-0|1-0-0-0|1-0-0-0|1-1-0-0|0-1-0-0</columns>
@@ -10,7 +11,7 @@
 	</level>
 	<level id="1" img="img/default" name="Laby10x10">
 		<posBille x="0" y="0"></posBille>
-		<posExit x="10" y="10"></posExit>
+		<posExit x="9" y="9"></posExit>
 		<labyrinthe width="10" height="10">
 			<lines>1-1-1-0-0-1-1-1-0|0-1-0-0-0-0-0-1-0|0-0-0-0-1-0-1-0-0|0-0-0-1-1-0-1-0-0|0-0-1-1-0-1-0-0-0|0-0-1-0-0-0-0-0-0|0-0-0-0-0-1-0-0-0|0-1-0-1-0-1-0-0-0|0-1-0-1-1-1-0-1-1|1-0-1-0-1-1-1-1-1</lines>
 			<columns>0-1-1-1-1-1-1-1-0|0-0-1-1-1-1-0-1-0|0-1-1-0-0-1-0-1-0|0-1-0-0-0-0-1-0-0|1-0-0-0-0-1-1-0-0|1-0-1-0-1-1-0-0-0|0-1-1-0-1-1-0-0-0|0-0-0-1-1-1-1-1-0|0-0-1-1-1-0-1-0-0|1-1-1-1-1-1-1-0-0</columns>
@@ -19,7 +20,7 @@
 	</level>
 	<level id="2" img="img/default" name="Test">
 		<posBille x="0" y="1"></posBille>
-		<posExit x="0" y="1"></posExit>
+		<posExit x="3" y="1"></posExit>
 		<labyrinthe width="5" height="5">
 			<lines>1-0-1-0|1-1-0-0|0-1-0-1|1-0-1-1|0-0-0-0</lines>
 			<columns>0-0-1-0|1-0-0-1|1-0-1-0|1-1-0-0|0-1-0-0</columns>

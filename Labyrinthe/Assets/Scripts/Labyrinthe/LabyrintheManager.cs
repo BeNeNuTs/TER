@@ -29,7 +29,7 @@ public class LabyrintheManager : MonoBehaviour {
 		
 		string path = SearchPath (folderLevels, "levels");
 		path = path.Replace ("\\", "/");
-		
+
 		return new XmlTextReader(path);
 	}
 
@@ -38,7 +38,7 @@ public class LabyrintheManager : MonoBehaviour {
 		
 		string path = SearchPath (folderSave, "savedLevels");
 		path = path.Replace ("\\", "/");
-		
+
 		return new XmlTextReader(path);
 	}
 
@@ -123,8 +123,6 @@ public class LabyrintheManager : MonoBehaviour {
 	}
 
 	public void GenerateLabyrinthe(int level, Level.LevelType levelType){
-		Debug.Log("ici");
-
 		if(levelType == Level.LevelType.Level)
 			currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
 		else
@@ -135,20 +133,27 @@ public class LabyrintheManager : MonoBehaviour {
 
 		currentLevel.levelType = levelType;
 
-		/** TODO */
-		/*if (currentLevel.labyrinthe.Length != currentLevel.width * currentLevel.height) {
-			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Nb pièces : " + currentLevel.labyrinthe.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
+		if (currentLevel.lines.Length != currentLevel.width || currentLevel.columns.Length != currentLevel.height) {
+			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Lignes : " + currentLevel.lines.Length + " Colonnes : " + currentLevel.columns.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
 			return;
-		}*/
+		}
+		if (currentLevel.posBille.x > currentLevel.width - 1 || currentLevel.posBille.z > currentLevel.height - 1) {
+			Debug.LogError("Position de départ de la bille hors du labyrinthe. Position bille : " + currentLevel.posBille.ToString() + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
+			return;
+		}
+		if (currentLevel.posExit.x > currentLevel.width - 1 || currentLevel.posExit.z > currentLevel.height - 1) {
+			Debug.LogError("Position de la sortie est hors du labyrinthe. Position sortie : " + currentLevel.posExit.ToString() + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
+			return;
+		}
 
 		GameController.currentLevel = currentLevel;
 		StartCoroutine(maze.GenerateLevel(currentLevel));
 		bille = Instantiate(bille) as GameObject;
-		bille.transform.position = new Vector3(maze.GetCell(new IntVector2(0,0)).transform.position.x, 0.4f, maze.GetCell(new IntVector2(0,0)).transform.position.z);
+		bille.transform.position = new Vector3(maze.GetCell(currentLevel.posBille).transform.position.x, 0.4f, maze.GetCell(currentLevel.posBille).transform.position.z);
 		bille.transform.parent = maze.transform;
 
 		exit = Instantiate(exit) as GameObject;
-		exit.transform.position = new Vector3(maze.GetCell(new IntVector2(currentLevel.width - 1,currentLevel.height - 1)).transform.position.x, 1, maze.GetCell(new IntVector2(currentLevel.width - 1,currentLevel.height - 1)).transform.position.z);
+		exit.transform.position = new Vector3(maze.GetCell(currentLevel.posExit).transform.position.x, 0f, maze.GetCell(currentLevel.posExit).transform.position.z);
 		exit.transform.parent = maze.transform;
 	}
 
