@@ -6,8 +6,20 @@ using System.IO;
 
 public class EditorController : MonoBehaviour {
 
+	public InputField nameLab;
+
 	public Slider widthSlider;
 	public Slider heightSlider;
+
+	public InputField posBilleX;
+	public InputField posBilleZ;
+
+	public InputField posExitX;
+	public InputField posExitZ;
+
+	public InputField timeGold;
+	public InputField timeSilver;
+	public InputField timeBronze;
 
 	public Button saveButton;
 	public Button solveButton;
@@ -28,12 +40,8 @@ public class EditorController : MonoBehaviour {
 	}
 
 	public void Generate(){
-		if(!saveButton.IsInteractable()){
-			saveButton.interactable = true;
-		}
-		if(!solveButton.IsInteractable()){
-			solveButton.interactable = true;
-		}
+		CheckAllField();
+		CheckPosField();
 
 		//Supprimer l'ancien labyrinthe généré
 		Transform [] child = maze.transform.GetComponentsInChildren<Transform>();
@@ -65,7 +73,13 @@ public class EditorController : MonoBehaviour {
 		solveButton.interactable = false;
 
 		ResetRotationLabyrinthe();
-		deadEndScript.deadEndFilling(maze, new IntVector2(0,0), new IntVector2(maze.size.x - 1, maze.size.z - 1));
+
+		int posXBille = int.Parse(posBilleX.text);
+		int posZBille = int.Parse(posBilleZ.text);
+
+		int posXExit = int.Parse(posExitX.text);
+		int posZExit = int.Parse(posExitZ.text);
+		deadEndScript.deadEndFilling(maze, new IntVector2(posXBille, posZBille), new IntVector2(posXExit, posZExit));
 	}
 
 	public void Save(){
@@ -94,7 +108,7 @@ public class EditorController : MonoBehaviour {
 		XmlAttribute img = xdoc.CreateAttribute("img");
 		img.Value = "img/" + id.Value;
 		XmlAttribute name = xdoc.CreateAttribute("name");
-		name.Value = "test";
+		name.Value = nameLab.text;
 		xmlNewLevel.Attributes.Append(id);
 		xmlNewLevel.Attributes.Append(img);
 		xmlNewLevel.Attributes.Append(name);
@@ -122,9 +136,9 @@ public class EditorController : MonoBehaviour {
 		//PosBille node
 		XmlNode xmlNewPosBille = xdoc.CreateNode(XmlNodeType.Element, "posBille", null);
 		XmlAttribute x = xdoc.CreateAttribute("x");
-		x.Value = "0";
+		x.Value = posBilleX.text;
 		XmlAttribute y = xdoc.CreateAttribute("y");
-		y.Value = "0";
+		y.Value = posBilleZ.text;
 		xmlNewPosBille.Attributes.Append(x);
 		xmlNewPosBille.Attributes.Append(y);
 		//////////////
@@ -132,9 +146,9 @@ public class EditorController : MonoBehaviour {
 		//PosExit node
 		XmlNode xmlNewPosExit = xdoc.CreateNode(XmlNodeType.Element, "posExit", null);
 		x = xdoc.CreateAttribute("x");
-		x.Value = (Mathf.FloorToInt(widthSlider.value) - 1).ToString();
+		x.Value = posExitX.text;
 		y = xdoc.CreateAttribute("y");
-		y.Value = (Mathf.FloorToInt(heightSlider.value) - 1).ToString();
+		y.Value = posExitZ.text;
 		xmlNewPosExit.Attributes.Append(x);
 		xmlNewPosExit.Attributes.Append(y);
 		//////////////
@@ -160,15 +174,15 @@ public class EditorController : MonoBehaviour {
 
 		//Time node
 		XmlNode xmlNewTime = xdoc.CreateNode(XmlNodeType.Element, "time", null);
-		XmlAttribute timeGold = xdoc.CreateAttribute("gold");
-		timeGold.Value = "10";
-		XmlAttribute timeSilver = xdoc.CreateAttribute("silver");
-		timeSilver.Value = "15";
-		XmlAttribute timeBronze = xdoc.CreateAttribute("bronze");
-		timeBronze.Value = "20";
-		xmlNewTime.Attributes.Append(timeGold);
-		xmlNewTime.Attributes.Append(timeSilver);
-		xmlNewTime.Attributes.Append(timeBronze);
+		XmlAttribute timeGoldXml = xdoc.CreateAttribute("gold");
+		timeGoldXml.Value = timeGold.text;
+		XmlAttribute timeSilverXml = xdoc.CreateAttribute("silver");
+		timeSilverXml.Value = timeSilver.text;
+		XmlAttribute timeBronzeXml = xdoc.CreateAttribute("bronze");
+		timeBronzeXml.Value = timeBronze.text;
+		xmlNewTime.Attributes.Append(timeGoldXml);
+		xmlNewTime.Attributes.Append(timeSilverXml);
+		xmlNewTime.Attributes.Append(timeBronzeXml);
 		//////////////
 
 		xmlNewLevel.AppendChild(xmlNewPosBille);
@@ -217,6 +231,80 @@ public class EditorController : MonoBehaviour {
 			
 			if(x < maze.size.x - 1)
 				columns += "|";
+		}
+	}
+
+	public void CheckPosField(){
+		deadEndScript.clear();
+
+		if(CheckPosBille() && CheckPosExit()){
+			solveButton.interactable = true;
+		}else{
+			solveButton.interactable = false;
+		}
+	}
+
+	public void CheckAllField(){
+		if(CheckName() && CheckPosBille() && CheckPosExit() && CheckTime()){
+			saveButton.interactable = true;
+		}else{
+			saveButton.interactable = false;
+		}
+	}
+
+	public bool CheckName(){
+		if(nameLab.text == ""){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public bool CheckPosBille(){
+		if(posBilleX.text == "" || posBilleZ.text == ""){
+			return false;
+		}
+
+		int posX = int.Parse(posBilleX.text);
+		int posZ = int.Parse(posBilleZ.text);
+
+		int width = Mathf.FloorToInt(widthSlider.value);
+		int height = Mathf.FloorToInt(heightSlider.value);
+
+		if(posX > width - 1 || posZ > height - 1){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public bool CheckPosExit(){
+		if(posExitX.text == "" || posExitZ.text == ""){
+			return false;
+		}
+
+		int posX = int.Parse(posExitX.text);
+		int posZ = int.Parse(posExitZ.text);
+		
+		int width = Mathf.FloorToInt(widthSlider.value);
+		int height = Mathf.FloorToInt(heightSlider.value);
+		
+		if(posX > width - 1 || posZ > height - 1){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	public bool CheckTime(){
+		int gold = int.Parse(timeGold.text);
+		int silver = int.Parse(timeSilver.text);
+		int bronze = int.Parse(timeBronze.text);
+
+		if(gold < silver && silver < bronze){
+			return true;
+		}else{
+			return false;
 		}
 	}
 

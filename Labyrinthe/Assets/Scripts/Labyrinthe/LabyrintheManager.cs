@@ -98,7 +98,6 @@ public class LabyrintheManager : MonoBehaviour {
 		myXmlTextReader.Close();
 
 		if(level.id == idLevel){
-			//Debug.Log (level.ToString ());
 			return level;
 		}else{
 			Debug.LogError("Impossible de charger le Labyrinthe n°" + idLevel);

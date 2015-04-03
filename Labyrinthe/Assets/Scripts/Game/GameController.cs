@@ -30,7 +30,6 @@ public class GameController : MonoBehaviour {
 		if (Input.GetButtonDown("Cancel")) {
 			TogglePauseMenu();
 		}else if (Input.GetButtonDown("Submit")) {
-			Debug.Log("Toggle");
 			ToggleView();
 		}
 
