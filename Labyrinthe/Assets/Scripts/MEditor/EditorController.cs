@@ -24,7 +24,10 @@ public class EditorController : MonoBehaviour {
 	public Button saveButton;
 	public Button solveButton;
 
+	public Text errorText;
+
 	public GameObject mazeGameObject;
+	
 
 	private Maze maze;
 	private PlateauController plateauScript;
@@ -84,6 +87,13 @@ public class EditorController : MonoBehaviour {
 
 	public void Save(){
 		if(iTween.Count() > 0){
+			return;
+		}
+
+		FormatMaze();
+		if(LevelAlreadyExist(new IntVector2(int.Parse(posBilleX.text), int.Parse(posBilleZ.text)), new IntVector2(int.Parse(posExitX.text), int.Parse(posExitZ.text)), Mathf.FloorToInt(widthSlider.value), Mathf.FloorToInt(heightSlider.value), lines, columns)){
+			ShowError("Le niveau existe déjà.");
+			//Debug.LogError("Level already exist");
 			return;
 		}
 
@@ -165,7 +175,6 @@ public class EditorController : MonoBehaviour {
 		XmlNode xmlNewLines = xdoc.CreateNode(XmlNodeType.Element, "lines", null);
 		XmlNode xmlNewColumns = xdoc.CreateNode(XmlNodeType.Element, "columns", null);
 
-		FormatMaze();
 		xmlNewLines.InnerText = lines;
 		xmlNewColumns.InnerText = columns;
 		xmlNewLabyrinthe.AppendChild(xmlNewLines);
@@ -193,6 +202,69 @@ public class EditorController : MonoBehaviour {
 		savedLevel.InsertAfter(xmlNewLevel, level);
 
 		xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderSave + "/savedLevels.xml");
+	}
+
+	public static void RemoveLevel(int idLevel){
+		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
+		
+		XmlDocument xdoc = new XmlDocument();
+		xdoc.Load(myXmlTextReader);
+		
+		myXmlTextReader.Close();
+
+		XmlNodeList levelNodes = xdoc.GetElementsByTagName("level");
+		
+		for (int i = 0; i < levelNodes.Count; i++)
+		{
+			if (levelNodes[i].Attributes["id"] != null)
+			{
+				if (idLevel.ToString() == levelNodes[i].Attributes["id"].InnerText)
+				{    
+					levelNodes[i].ParentNode.RemoveChild(levelNodes[i]);
+					xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderSave + "/savedLevels.xml");
+					Debug.Log("Level id = " + idLevel + " was removed.");
+					return;
+				}
+			}
+		}
+
+		Debug.LogError("Level to remove doesn't find.");
+	}
+
+	public static bool LevelAlreadyExist(IntVector2 posBille, IntVector2 posExit, int width, int height, string lines, string columns){
+		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
+		
+		XmlDocument xdoc = new XmlDocument();
+		xdoc.Load(myXmlTextReader);
+		
+		myXmlTextReader.Close();
+		
+		XmlNodeList levelNodes = xdoc.GetElementsByTagName("level");
+		
+		for (int i = 0; i < levelNodes.Count; i++)
+		{
+			XmlNode posBilleNode = levelNodes[i].FirstChild;
+			XmlNode posExitNode = levelNodes[i]["posExit"];
+			XmlNode labyrintheNode = levelNodes[i]["labyrinthe"];
+			XmlNode linesNode = labyrintheNode.FirstChild;
+			XmlNode columnsNode = labyrintheNode.LastChild;
+
+			if (posBilleNode.Attributes["x"].InnerText == posBille.x.ToString() && posBilleNode.Attributes["y"].InnerText == posBille.z.ToString())
+			{  
+				if (posExitNode.Attributes["x"].InnerText == posExit.x.ToString() && posExitNode.Attributes["y"].InnerText == posExit.z.ToString())
+				{ 
+					if (labyrintheNode.Attributes["width"].InnerText == width.ToString() && labyrintheNode.Attributes["height"].InnerText == height.ToString())
+					{
+						if (linesNode.InnerText == lines && columnsNode.InnerText == columns)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private void FormatMaze() {
@@ -254,6 +326,7 @@ public class EditorController : MonoBehaviour {
 
 	public bool CheckName(){
 		if(nameLab.text == ""){
+			ShowError("Nom incorrect.");
 			return false;
 		}else{
 			return true;
@@ -272,6 +345,7 @@ public class EditorController : MonoBehaviour {
 		int height = Mathf.FloorToInt(heightSlider.value);
 
 		if(posX > width - 1 || posZ > height - 1){
+			ShowError("Position bille incorrecte.");
 			return false;
 		}else{
 			return true;
@@ -290,6 +364,7 @@ public class EditorController : MonoBehaviour {
 		int height = Mathf.FloorToInt(heightSlider.value);
 		
 		if(posX > width - 1 || posZ > height - 1){
+			ShowError("Position sortie incorrecte.");
 			return false;
 		}else{
 			return true;
@@ -297,6 +372,10 @@ public class EditorController : MonoBehaviour {
 	}
 
 	public bool CheckTime(){
+		if(timeGold.text == "" || timeSilver.text == "" || timeBronze.text == ""){
+			return false;
+		}
+
 		int gold = int.Parse(timeGold.text);
 		int silver = int.Parse(timeSilver.text);
 		int bronze = int.Parse(timeBronze.text);
@@ -304,6 +383,7 @@ public class EditorController : MonoBehaviour {
 		if(gold < silver && silver < bronze){
 			return true;
 		}else{
+			ShowError("Temps incorrect.");
 			return false;
 		}
 	}
@@ -316,6 +396,21 @@ public class EditorController : MonoBehaviour {
 		//Remettre le labyrinthe en rotation (0,0,0)
 		plateauScript.ResetRotation();
 		maze.transform.rotation = Quaternion.Euler(0,0,0);
+	}
+
+	public void ShowError(string error){
+
+		Animator anim = errorText.gameObject.GetComponent<Animator>();
+
+		if (anim.GetCurrentAnimatorStateInfo(0).IsName("Fade"))
+		{
+			if(!errorText.text.Contains(error))
+				errorText.text += "\n"+error;
+		}else{
+			errorText.text = error;
+		}
+
+		anim.SetTrigger("fade");
 	}
 
 }
