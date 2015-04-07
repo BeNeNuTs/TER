@@ -4,7 +4,7 @@ using System.Collections;
 public class LevelManager : MonoBehaviour {
 
 	private static LevelManager levelManager = null;
-	private static int levelMaze = 1;
+	public static int levelMaze = 1;
 
 	public static int levelToLoad = -1;
 	

@@ -1,10 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DeadEndFilling.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\LeapManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\DeadEndFilling.cs" Line="77" Column="26" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="16" Column="5" />
-      <File FileName="Assets\Scripts\MazeDirection.cs" Line="13" Column="43" />
+      <File FileName="Assets\Scripts\LeapManager.cs" Line="29" Column="20" />
+      <File FileName="Assets\Scripts\LevelManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Menu\MenuController.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
