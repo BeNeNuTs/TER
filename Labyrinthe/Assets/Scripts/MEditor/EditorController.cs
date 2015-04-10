@@ -36,6 +36,8 @@ public class EditorController : MonoBehaviour {
 	private string lines;
 	private string columns;
 
+	private bool mazeIsGenerated = false;
+
 	void Start(){
 		maze = mazeGameObject.GetComponent<Maze>();
 		plateauScript = mazeGameObject.GetComponent<PlateauController>();
@@ -61,7 +63,10 @@ public class EditorController : MonoBehaviour {
 		int height = Mathf.FloorToInt(heightSlider.value);
 		maze.GenerateNoCoroutine(new IntVector2(width, height));
 
-		SetGlobalView(width, height);		
+		SetGlobalView(width, height);
+
+		mazeIsGenerated = true;
+		CheckPosField();
 	}
 
 	public static void SetGlobalView(int width, int height){
@@ -73,6 +78,11 @@ public class EditorController : MonoBehaviour {
 	}
 
 	public void Solve(){
+		int width = Mathf.FloorToInt(widthSlider.value);
+		int height = Mathf.FloorToInt(heightSlider.value);
+		if(width != maze.size.x || height != maze.size.z)
+			Generate();
+
 		solveButton.interactable = false;
 
 		ResetRotationLabyrinthe();
@@ -334,6 +344,8 @@ public class EditorController : MonoBehaviour {
 	}
 
 	public bool CheckPosBille(){
+		ResetDisplay(Color.green);
+
 		if(posBilleX.text == "" || posBilleZ.text == ""){
 			return false;
 		}
@@ -348,11 +360,19 @@ public class EditorController : MonoBehaviour {
 			ShowError("Position bille incorrecte.");
 			return false;
 		}else{
+			if(mazeIsGenerated){
+				if(posX < maze.size.x && posZ < maze.size.z){
+					MazeCell m = maze.GetCell(new IntVector2(posX, posZ));
+					m.gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = Color.green;
+				}
+			}
 			return true;
 		}
 	}
 
 	public bool CheckPosExit(){
+		ResetDisplay(Color.blue);
+
 		if(posExitX.text == "" || posExitZ.text == ""){
 			return false;
 		}
@@ -367,7 +387,28 @@ public class EditorController : MonoBehaviour {
 			ShowError("Position sortie incorrecte.");
 			return false;
 		}else{
+			if(mazeIsGenerated){
+				if(posX < maze.size.x && posZ < maze.size.z){
+					MazeCell m = maze.GetCell(new IntVector2(posX, posZ));
+					m.gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = Color.blue;
+				}
+			}
 			return true;
+		}
+	}
+
+	public void ResetDisplay(Color c){
+		if(!mazeIsGenerated)
+			return;
+
+		for(int i = 0 ; i < maze.size.x ; i++){
+			for(int j = 0 ; j < maze.size.z ; j++){
+				MazeCell cell = maze.GetCell(new IntVector2(i,j));
+				if(cell.gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color == c){
+					cell.gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = Color.white;
+					return;
+				}
+			}
 		}
 	}
 
