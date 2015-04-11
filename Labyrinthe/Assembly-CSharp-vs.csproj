@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Camera\CameraFollow.cs" />
      <Compile Include="Assets\Scripts\Game\GameController.cs" />
+     <Compile Include="Assets\Scripts\Game\PauseMenu.cs" />
      <Compile Include="Assets\Scripts\Game\TabScore.cs" />
      <Compile Include="Assets\Scripts\Labyrinthe\IntVector2.cs" />
      <Compile Include="Assets\Scripts\Labyrinthe\LabyrintheManager.cs" />

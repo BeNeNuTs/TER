@@ -22,6 +22,10 @@ public class Level {
 	public float timeBronze;
 	public LevelType levelType;
 
+	public uint? score;
+	public float? time;
+	public uint? stars;
+
 	public static char [] charSeparator = new char[]{'|'};
 
 	public Level(){
@@ -38,6 +42,9 @@ public class Level {
 		this.timeSilver = 0f;
 		this.timeBronze = 0f;
 		this.levelType = LevelType.Level;
+		this.score = null;
+		this.time = null;
+		this.stars = null;
 	}
 	
 	public override string ToString(){

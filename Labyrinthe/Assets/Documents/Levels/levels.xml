@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <levels>
-	<level id="0" img="img/default" name="Laby5x5">
+	<level id="0" img="img/default" name="Laby5x5" score="10000" time="15.56" stars="1">
 		<posBille x="0" y="0"></posBille>
 		<posExit x="4" y="4"></posExit>
 		<labyrinthe width="5" height="5">
@@ -9,7 +9,7 @@
 		</labyrinthe>
 		<time gold="10" silver="15" bronze="20"></time>
 	</level>
-	<level id="1" img="img/default" name="Laby10x10">
+	<level id="1" img="img/default" name="Laby10x10" score="" time="" stars="">
 		<posBille x="0" y="0"></posBille>
 		<posExit x="9" y="9"></posExit>
 		<labyrinthe width="10" height="10">
@@ -18,7 +18,7 @@
 		</labyrinthe>
 		<time gold="10" silver="15" bronze="20"></time>
 	</level>
-	<level id="2" img="img/default" name="Test">
+	<level id="2" img="img/default" name="Test" score="" time="" stars="">
 		<posBille x="0" y="1"></posBille>
 		<posExit x="3" y="1"></posExit>
 		<labyrinthe width="5" height="5">
@@ -27,7 +27,7 @@
 		</labyrinthe>
 		<time gold="10" silver="15" bronze="20"></time>
 	</level>
-	<level id="3" img="img/default" name="LabyTest">
+	<level id="3" img="img/default" name="LabyTest" score="" time="" stars="">
 		<posBille x="3" y="1"></posBille>
 		<posExit x="0" y="1"></posExit>
 		<labyrinthe width="5" height="5">

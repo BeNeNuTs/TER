@@ -55,6 +55,15 @@ public class LabyrintheManager : MonoBehaviour {
 					level.id = int.Parse(myXmlTextReader.GetAttribute("id"));
 					level.name = myXmlTextReader.GetAttribute("name");
 					level.img = myXmlTextReader.GetAttribute("img");
+					string score = myXmlTextReader.GetAttribute("score");
+					if(score != "")
+						level.score = uint.Parse(score);
+					string time = myXmlTextReader.GetAttribute("time");
+					if(time != "")
+						level.time = float.Parse(time);
+					string stars = myXmlTextReader.GetAttribute("stars");
+					if(stars != "")
+						level.stars = uint.Parse(stars);
 
 					//PosBille at the beginning /////////////////////////////
 					myXmlTextReader.ReadToFollowing("posBille");

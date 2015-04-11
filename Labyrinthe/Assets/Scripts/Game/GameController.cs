@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Xml;
+using System.IO;
 
 public class GameController : MonoBehaviour {
 
@@ -76,7 +78,28 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void NextLevel(){
-		LevelManager.setLevelToLoad((currentLevel.id + 1) % 4, currentLevel.levelType);
+		XmlTextReader myXmlTextReader;
+		if(currentLevel.levelType == Level.LevelType.Level)
+			myXmlTextReader = LabyrintheManager.GetLevelXML();
+		else
+			myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
+		
+		XmlDocument xdoc = new XmlDocument();
+		xdoc.Load(myXmlTextReader);
+		
+		myXmlTextReader.Close();
+		
+		XmlNodeList levelNodes = xdoc.GetElementsByTagName("level");
+		int nextLevel = int.Parse(levelNodes[0].Attributes["id"].InnerText);
+		for (int i = 0; i < levelNodes.Count - 1; i++)
+		{
+			if(levelNodes[i].Attributes["id"].InnerText == currentLevel.id.ToString()){
+				nextLevel = int.Parse(levelNodes[i+1].Attributes["id"].InnerText);
+				break;
+			}
+		}
+
+		LevelManager.setLevelToLoad(nextLevel, currentLevel.levelType);
 	}
 	
 	public void Continue(){
@@ -91,7 +114,7 @@ public class GameController : MonoBehaviour {
 	public void LevelComplete(){
 		levelComplete = true;
 		playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
-		timeText.text = "Time : " + playerTime;
+		timeText.text = "Temps : " + playerTime;
 	}
 
 	public void ToggleView(){
@@ -103,7 +126,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void SetGlobalView(){
-		iTween.Stop();
+		if(iTween.Count() > 0)
+			iTween.Stop();
 
 		inGlobalView = true;
 
@@ -115,7 +139,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void SetLocalView(){
-		iTween.Stop();
+		if(iTween.Count() > 0)
+			iTween.Stop();
 
 		inGlobalView = false;
 

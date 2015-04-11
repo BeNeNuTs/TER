@@ -129,9 +129,18 @@ public class EditorController : MonoBehaviour {
 		img.Value = "img/" + id.Value;
 		XmlAttribute name = xdoc.CreateAttribute("name");
 		name.Value = nameLab.text;
+		XmlAttribute score = xdoc.CreateAttribute("score");
+		score.Value = "";
+		XmlAttribute time = xdoc.CreateAttribute("time");
+		time.Value = "";
+		XmlAttribute stars = xdoc.CreateAttribute("stars");
+		stars.Value = "";
 		xmlNewLevel.Attributes.Append(id);
 		xmlNewLevel.Attributes.Append(img);
 		xmlNewLevel.Attributes.Append(name);
+		xmlNewLevel.Attributes.Append(score);
+		xmlNewLevel.Attributes.Append(time);
+		xmlNewLevel.Attributes.Append(stars);
 
 		//SCREENSHOT MAZE
 		int screenWidth = Mathf.FloorToInt(Camera.main.rect.width * Screen.width);
