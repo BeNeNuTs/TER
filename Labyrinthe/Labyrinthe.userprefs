@@ -1,14 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\TabScore.cs">
     <Files>
-      <File FileName="Assets\Scripts\Game\TabScore.cs" Line="46" Column="94" />
-      <File FileName="Assets\Scripts\Labyrinthe\LabyrintheManager.cs" Line="64" Column="56" />
-      <File FileName="Assets\Scripts\MEditor\EditorController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Game\GameController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Plugins\Pixelplacement\iTween\iTween.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\TabScore.cs" Line="45" Column="4" />
+      <File FileName="Assets\Scripts\Labyrinthe\LabyrintheManager.cs" Line="182" Column="20" />
+      <File FileName="Assets\Scripts\MEditor\EditorController.cs" Line="4" Column="1" />
+      <File FileName="Assets\Scripts\Game\GameController.cs" Line="144" Column="41" />
       <File FileName="Assets\Scripts\Labyrinthe\Levels\Level.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Game\PauseMenu.cs" Line="33" Column="57" />
+      <File FileName="Assets\Scripts\Game\PauseMenu.cs" Line="16" Column="34" />
+      <File FileName="Assets\Plugins\Pixelplacement\iTween\iTween.cs" Line="6417" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

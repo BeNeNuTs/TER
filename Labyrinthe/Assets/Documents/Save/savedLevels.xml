@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <savedLevels>
-  <level id="0" img="img/0" name="test" score="" time="" stars="">
+  <level id="0" img="img/0" name="test" score="30260" time="9.74" stars="3">
     <posBille x="0" y="0" />
     <posExit x="4" y="4" />
     <labyrinthe width="5" height="5">
@@ -9,7 +9,7 @@
     </labyrinthe>
     <time gold="10" silver="15" bronze="20" />
   </level>
-  <level id="1" img="img/1" name="test1" score="" time="" stars="">
+  <level id="1" img="img/1" name="test1" score="0" time="43" stars="0">
     <posBille x="0" y="0" />
     <posExit x="9" y="9" />
     <labyrinthe width="10" height="10">
@@ -54,7 +54,7 @@
     </labyrinthe>
     <time gold="10" silver="15" bronze="20" />
   </level>
-  <level id="6" img="img/6" name="Testing Save" score="" time="" stars="">
+  <level id="6" img="img/6" name="Testing Save" score="39780" time="0.22" stars="3">
     <posBille x="0" y="0" />
     <posExit x="4" y="4" />
     <labyrinthe width="5" height="5">
@@ -69,6 +69,15 @@
     <labyrinthe width="13" height="15">
       <lines>0-1-0-0-1-0-0-0-0-0-0-0|1-1-1-0-0-0-0-0-1-0-0-0|1-0-1-0-1-0-0-1-1-0-1-1|0-1-0-1-1-1-1-0-1-0-0-1|0-1-0-1-1-1-0-0-0-0-0-0|1-0-1-1-1-0-0-0-1-0-0-1|1-1-1-1-0-1-0-0-1-1-0-0|1-1-0-1-0-0-1-0-0-1-1-0|1-1-0-0-0-1-0-0-0-1-0-1|1-0-1-0-1-0-0-1-1-1-0-1|0-1-0-1-0-0-1-1-0-1-0-1|0-0-0-1-0-1-0-1-1-0-1-0|1-1-0-0-1-1-0-1-0-0-0-1|0-1-1-0-1-1-1-0-0-0-0-1|0-0-0-1-0-1-0-0-0-1-0-0</lines>
       <columns>0-0-0-1-0-0-0-0-0-0-0-0-0-1|0-0-1-0-1-0-0-0-0-1-1-1-0-0|0-0-1-0-1-0-0-1-1-0-1-0-1-0|1-1-0-1-0-0-0-1-1-0-1-1-0-1|0-1-0-1-0-0-0-1-0-1-0-1-1-0|1-1-0-0-0-1-1-1-0-1-1-0-0-0|1-1-1-0-1-1-0-0-1-1-0-1-0-0|1-1-0-1-1-1-0-1-1-0-0-1-1-0|1-0-0-1-0-1-1-1-1-0-0-0-1-1|0-0-1-1-1-0-0-1-0-0-1-1-1-1|1-1-0-1-1-0-1-0-0-1-0-1-1-0|1-1-0-1-1-1-1-0-1-0-1-0-1-1|1-0-0-0-0-0-1-0-0-0-0-0-0-0</columns>
+    </labyrinthe>
+    <time gold="10" silver="15" bronze="20" />
+  </level>
+  <level id="8" img="img/8" name="Test Scores" score="" time="" stars="">
+    <posBille x="0" y="0" />
+    <posExit x="3" y="3" />
+    <labyrinthe width="5" height="5">
+      <lines>0-0-1-0|1-0-0-1|0-0-0-0|0-0-1-0|0-0-0-0</lines>
+      <columns>0-0-0-1|1-1-1-1|0-1-1-0|0-1-1-1|0-1-1-0</columns>
     </labyrinthe>
     <time gold="10" silver="15" bronze="20" />
   </level>

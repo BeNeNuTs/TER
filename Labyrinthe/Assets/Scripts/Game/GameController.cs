@@ -126,8 +126,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void SetGlobalView(){
-		if(iTween.Count() > 0)
-			iTween.Stop();
+		if(iTween.Count(Camera.main.gameObject) > 0){
+			iTween.Stop(Camera.main.gameObject);
+		}
+			
 
 		inGlobalView = true;
 
@@ -139,8 +141,9 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void SetLocalView(){
-		if(iTween.Count() > 0)
-			iTween.Stop();
+		if(iTween.Count(Camera.main.gameObject) > 0){
+			iTween.Stop(Camera.main.gameObject);
+		}
 
 		inGlobalView = false;
 

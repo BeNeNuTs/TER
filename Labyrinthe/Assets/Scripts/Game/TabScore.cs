@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Xml;
+using System.IO;
 
 public class TabScore : MonoBehaviour {
 
@@ -33,20 +35,66 @@ public class TabScore : MonoBehaviour {
 			nbStars = 1;
 		}
 
+		//Afficher les étoiles
 		StartCoroutine(ShowStar(nbStars, delayStar));
-
-		int score = nbStars * starPoint + Mathf.FloorToInt(Mathf.Abs(time - beatTime) * 1000);
+		int score = 0;
+		if(nbStars == 0){
+			score = starPoint - Mathf.FloorToInt(Mathf.Abs(time - currentLevel.timeBronze) * 1000);
+			if(score < 0)
+				score = 0;
+		}else if(nbStars > 0){
+			score = nbStars * starPoint + Mathf.FloorToInt(Mathf.Abs(time - beatTime) * 1000);
+		}
 		scoreText.text += score;
-
 		timeText.text += time;
 
-		if(currentLevel.score == null){
+
+		//Si record battu
+		if(currentLevel.score == null || score > currentLevel.score){
+			//Afficher "Nouveau meilleur score !!!"
 			iTween.ScaleTo(highScore, iTween.Hash("scale", new Vector3(1f,1f,1f), "delay", delayStar, "time", 1f, "easetype", iTween.EaseType.easeOutElastic));
-		}else if(score > currentLevel.score){
-			iTween.ScaleTo(highScore, iTween.Hash("scale", new Vector3(1f,1f,1f), "delay", delayStar, "time", 1f, "easetype", iTween.EaseType.easeOutElastic));
+
+			//Sauvegarder le nouveau meilleur score
+			SaveHighScore(score, time, nbStars);
 		}
 
-		//TODO : SAVING NEW SCORE
+	}
+
+	private void SaveHighScore(int score, float time, int nbStars){
+		XmlTextReader myXmlTextReader;
+		if(GameController.currentLevel.levelType == Level.LevelType.Level){
+			myXmlTextReader = LabyrintheManager.GetLevelXML();
+		}else{
+			myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
+		}
+		
+		XmlDocument xdoc = new XmlDocument();
+		xdoc.Load(myXmlTextReader);
+		
+		myXmlTextReader.Close();
+		
+		XmlNodeList levelNodes = xdoc.GetElementsByTagName("level");
+		
+		for (int i = 0; i < levelNodes.Count; i++)
+		{
+			if (levelNodes[i].Attributes["id"] != null)
+			{
+				if (GameController.currentLevel.id.ToString() == levelNodes[i].Attributes["id"].InnerText)
+				{    
+					levelNodes[i].Attributes["score"].InnerText = score.ToString();
+					levelNodes[i].Attributes["time"].InnerText = time.ToString();
+					levelNodes[i].Attributes["stars"].InnerText = nbStars.ToString();
+					if(GameController.currentLevel.levelType == Level.LevelType.Level){
+						xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderLevels + "/levels.xml");
+					}else{
+						xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderSave + "/savedLevels.xml");
+					}
+					return;
+				}
+			}
+		}
+		
+		Debug.LogError("Level to update high score doesn't find.");
 	}
 
 	IEnumerator ShowStar(int nbStars, float delay){

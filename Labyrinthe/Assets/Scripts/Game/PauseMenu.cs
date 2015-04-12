@@ -9,15 +9,11 @@ public class PauseMenu : MonoBehaviour {
 
 	public GameObject [] fillStars;
 
-	private bool alreadyGenerate = false;
-
 	void Start(){
-		if(!alreadyGenerate)
-			GenerateBestScore();
+		GenerateBestScore();
 	}
 
 	public void GenerateBestScore(){
-		alreadyGenerate = true;
 
 		if(GameController.currentLevel.score != null)
 			bestScoreText.text = "Meilleur score : " + GameController.currentLevel.score;
