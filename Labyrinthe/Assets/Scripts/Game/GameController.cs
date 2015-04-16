@@ -68,6 +68,16 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	//Méthode à appeler avec les boutons
+	public void ReplayB(){
+		GameController.Replay();
+	}
+
+	public static void Replay(){
+		Time.timeScale = 1f;
+		LevelManager.setLevelToLoad(currentLevel.id, currentLevel.levelType); 
+	}
+
 	public void Back(){
 		GameController.BackToMenu();
 	}
