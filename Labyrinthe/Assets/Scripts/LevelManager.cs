@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour {
 	public static int levelMaze = 1;
 
 	public static int levelToLoad = -1;
+	public static Level.LevelType levelTypeToLoad;
 	
 	void Awake () {
 		if(levelManager == null)
@@ -17,9 +18,10 @@ public class LevelManager : MonoBehaviour {
 		DontDestroyOnLoad (gameObject);
 	}
 
-	public static void setLevelToLoad (int level) {
+	public static void setLevelToLoad (int level, Level.LevelType levelType) {
 		levelToLoad = level;
-		Debug.Log("LevelToLoad = " + level);
+		levelTypeToLoad = levelType;
+		Debug.Log("LevelToLoad = " + level + " Level Type : " + levelTypeToLoad);
 		Application.LoadLevel(levelMaze);
 	}
 
@@ -31,8 +33,7 @@ public class LevelManager : MonoBehaviour {
 			}
 			GameObject labManager = GameObject.Find("LabyrintheManager");
 			if(labManager != null){
-				Debug.Log("Here");
-				labManager.GetComponent<LabyrintheManager>().GenerateLabyrinthe(levelToLoad);
+				labManager.GetComponent<LabyrintheManager>().GenerateLabyrinthe(levelToLoad, levelTypeToLoad);
 			}else{
 				Debug.LogError("Erreur : Impossible de trouver LabyrintheManager.");
 			}

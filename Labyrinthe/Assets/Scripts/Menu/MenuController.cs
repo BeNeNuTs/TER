@@ -8,21 +8,19 @@ public class MenuController : MonoBehaviour {
 
 	public GameObject menu;
 	public GameObject levels;
-	public GameObject options;
+	public GameObject editor;
 
 	public float timeTransition = 1f;
 
 	void Awake(){
-		Debug.Log("Screen : width = " + Screen.width + " height = " + Screen.height);
 
 		//Désactiver la vue des levels et la mettre à droite
 		levels.SetActive(false);
-		levels.transform.position = new Vector3(Screen.width * 2,Mathf.Floor(Screen.height/2),0);
+		levels.transform.localPosition = new Vector3(Screen.width*2,0,0);
 
-		//Désactiver la vue des options et la mettre à gauche
-		options.SetActive(false);
-		options.transform.position = new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0);
-
+		//Désactiver la vue des editor et la mettre à gauche
+		editor.SetActive(false);
+		editor.transform.localPosition = new Vector3(-Screen.width*2,0,0);
 	}
 
 
@@ -37,15 +35,15 @@ public class MenuController : MonoBehaviour {
 		iTween.MoveTo(levels, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
 	}
 
-	public void Options(){
-		Debug.Log("Show Options");
+	public void Editor(){
+		Debug.Log("Show editor");
 
 		//Mettre le menu a gauche
 		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
 		
-		options.SetActive(true);
-		//Mettre les options au milieu
-		iTween.MoveTo(options, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		editor.SetActive(true);
+		//Mettre les editor au milieu
+		iTween.MoveTo(editor, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
 	}
 
 	public void BackToMenu(){
@@ -55,8 +53,8 @@ public class MenuController : MonoBehaviour {
 		//Remettre les levels à droite
 		iTween.MoveTo(levels, iTween.Hash("position", new Vector3(Screen.width * 2,Mathf.Floor(Screen.height/2),0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
 	
-		//Remettre les options à gauche
-		iTween.MoveTo(options, iTween.Hash("position", new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
+		//Remettre les editor à gauche
+		iTween.MoveTo(editor, iTween.Hash("position", new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
 	}
 
 	public void GoToEditor(){

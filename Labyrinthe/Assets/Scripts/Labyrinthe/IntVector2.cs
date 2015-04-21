@@ -13,4 +13,9 @@ public struct IntVector2 {
 		a.z += b.z;
 		return a;
 	}
+
+	public override string ToString ()
+	{
+		return string.Format ("[IntVector2] x : " + x + " z : " + z);
+	}
 }

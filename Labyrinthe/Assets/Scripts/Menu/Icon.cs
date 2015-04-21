@@ -5,6 +5,7 @@ using System.Collections;
 public class Icon : MonoBehaviour {
 
 	public int id;
+	public Level.LevelType levelType;
 
 	private Image imgIcon;
 	private Text levelTitle;
@@ -30,16 +31,21 @@ public class Icon : MonoBehaviour {
 			Debug.LogError("id < 0, impossible de charger l'icone avec l'id = "+id);
 			return;
 		}
-		Level level = LabyrintheManager.LoadLevel(LabyrintheManager.GetLevelXML(), id);
 
-		Debug.Log(level.img);
+		Level level;
+
+		if(levelType == Level.LevelType.Level){
+			level = LabyrintheManager.LoadLevel(LabyrintheManager.GetLevelXML(), id);
+		}else{
+			level = LabyrintheManager.LoadLevel(LabyrintheManager.GetSavedLevelXML(), id);
+		}
+
 		imgIcon.sprite = Resources.Load<Sprite>(level.img) as Sprite;
 		levelTitle.text = level.name;
 	}
 	
 	public void OnClick(){
-		Debug.Log("OnClick = Id : " + id);
-		LevelManager.setLevelToLoad(id);
+		LevelManager.setLevelToLoad(id, levelType);
 	}
 
 
