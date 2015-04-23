@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	private void TogglePauseMenu(){
+	public void TogglePauseMenu(){
 		if(levelComplete)
 			return;
 
