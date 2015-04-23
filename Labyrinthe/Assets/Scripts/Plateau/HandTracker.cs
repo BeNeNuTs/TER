@@ -23,9 +23,14 @@ public class HandTracker : MonoBehaviour {
 		currentState = possibleStates.PLAYING;
 		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);
 		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
+		controller.Config.SetFloat("Gesture.Circle.MinRadius", 2.0f);
+		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);
 		controller.Config.Save();
 		cooldown = time;
 		time -= 0.5f;
+
+		// Pour éviter la pause dès le lancement du jeu
+		while(controller.Frame().Hands.IsEmpty){}
 	}
 	
 	// Update is called once per frame
@@ -49,17 +54,18 @@ public class HandTracker : MonoBehaviour {
 				break;
 				
 			case possibleStates.PAUSE:
-				Pause();
+				StartCoroutine("updatePause");
 				break;
 		}
 	}
 
-	private void Pause(){
+	// Coroutine pour que la pause continue de fonctionner avec un time scale à 0
+	IEnumerator updatePause(){
 		if (time >= cooldown) {
 			foreach (Gesture g in controller.Frame().Gestures()) {
 				if(g.Type == Gesture.GestureType.TYPE_SWIPE && g.State == Gesture.GestureState.STATE_STOP){
 					SwipeGesture swipe = new SwipeGesture (g);
-
+					
 					// swipe vers la gauche ou vers la droite
 					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
 						// Si vers la gauche, retour au menu
@@ -67,29 +73,33 @@ public class HandTracker : MonoBehaviour {
 						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						GameController.BackToMenu();
-					
+						
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
 						// Si vers la droite, on enlève la pause
 						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
 						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
-						gc.TogglePauseMenu();
+						currentState = possibleStates.PLAYING;
 					} else {
 						time = cooldown - 0.5f;
 					}
-
+					
 				} else if(g.Type == Gesture.GestureType.TYPECIRCLE && g.State == Gesture.GestureState.STATE_STOP){
-					CircleGesture circle = new CircleGesture (g);
-
+					// Si cercle, rejouer le niveau
 					controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
 					controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 					time = cooldown;
-
 					GameController.Replay();
 				}
 			}
 		} else {
-			time += Time.deltaTime;
+			time += 0.1f;
+		}
+		if (currentState == possibleStates.PAUSE) {
+			yield return null;
+		} else {
+			gc.TogglePauseMenu();
+			StopCoroutine("updatePause");
 		}
 	}
 

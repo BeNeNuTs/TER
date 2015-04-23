@@ -22,6 +22,7 @@ public class LeapManager : MonoBehaviour {
 		leap.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
 		leap.Config.Save();
 		cooldown = time;
+		time -= 0.5f;
 		currentState = possibleStates.MAIN_MENU;
 	}
 	
