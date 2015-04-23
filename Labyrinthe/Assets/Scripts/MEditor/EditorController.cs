@@ -4,7 +4,6 @@ using System.Collections;
 using System.Xml;
 using System.IO;
 
-/** EditorController permet de gérer les interactions dans la scène editeur */
 public class EditorController : MonoBehaviour {
 
 	public InputField nameLab;
@@ -39,15 +38,12 @@ public class EditorController : MonoBehaviour {
 
 	private bool mazeIsGenerated = false;
 
-	/** Initialise le mazeScript, le plateauScript, le deadEndScript */
 	void Start(){
 		maze = mazeGameObject.GetComponent<Maze>();
 		plateauScript = mazeGameObject.GetComponent<PlateauController>();
 		deadEndScript = GetComponent<DeadEndFilling>();
 	}
 
-
-	/** Génére un nouveau labyrinthe */
 	public void Generate(){
 		CheckAllField();
 		CheckPosField();
@@ -73,7 +69,6 @@ public class EditorController : MonoBehaviour {
 		CheckPosField();
 	}
 
-	/** Actualise la vue de la caméra en fonction de la taille du labyrinthe généré */
 	public static void SetGlobalView(int width, int height){
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
@@ -82,7 +77,6 @@ public class EditorController : MonoBehaviour {
 			iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", newPos, "time", 2f));
 	}
 
-	/** Résoud un labyrinthe avec l'algorithme de dead-end filling */
 	public void Solve(){
 		int width = Mathf.FloorToInt(widthSlider.value);
 		int height = Mathf.FloorToInt(heightSlider.value);
@@ -101,7 +95,6 @@ public class EditorController : MonoBehaviour {
 		deadEndScript.deadEndFilling(maze, new IntVector2(posXBille, posZBille), new IntVector2(posXExit, posZExit));
 	}
 
-	/** Sauvegarde un labyrinthe dans le fichier savedLevels.xml */
 	public void Save(){
 		if(iTween.Count() > 0){
 			return;
@@ -110,6 +103,7 @@ public class EditorController : MonoBehaviour {
 		FormatMaze();
 		if(LevelAlreadyExist(new IntVector2(int.Parse(posBilleX.text), int.Parse(posBilleZ.text)), new IntVector2(int.Parse(posExitX.text), int.Parse(posExitZ.text)), Mathf.FloorToInt(widthSlider.value), Mathf.FloorToInt(heightSlider.value), lines, columns)){
 			ShowError("Le niveau existe déjà.");
+			//Debug.LogError("Level already exist");
 			return;
 		}
 
@@ -160,7 +154,7 @@ public class EditorController : MonoBehaviour {
 		screenShot.ReadPixels(new Rect(0, 0, Mathf.FloorToInt(screenWidth * Camera.main.rect.width), screenHeight), 0, 0);
 		
 		Camera.main.targetTexture = null;
-		RenderTexture.active = null;
+		RenderTexture.active = null; // JC: added to avoid errors
 		Destroy(rt);
 		
 		byte[] bytes = screenShot.EncodeToPNG();
@@ -227,10 +221,7 @@ public class EditorController : MonoBehaviour {
 		savedLevel.InsertAfter(xmlNewLevel, level);
 
 		xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderSave + "/savedLevels.xml");
-
-		ShowInfo("Niveau sauvegardé");
 	}
-
 
 	public static void RemoveLevel(int idLevel){
 		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
@@ -460,7 +451,6 @@ public class EditorController : MonoBehaviour {
 	public void ShowError(string error){
 
 		Animator anim = errorText.gameObject.GetComponent<Animator>();
-		errorText.color = Color.red;
 
 		if (anim.GetCurrentAnimatorStateInfo(0).IsName("Fade"))
 		{
@@ -470,16 +460,6 @@ public class EditorController : MonoBehaviour {
 			errorText.text = error;
 		}
 
-		anim.SetTrigger("fade");
-	}
-
-	public void ShowInfo(string info){
-		
-		Animator anim = errorText.gameObject.GetComponent<Animator>();
-		errorText.color = Color.green;
-
-		errorText.text = info;
-		
 		anim.SetTrigger("fade");
 	}
 
