@@ -30,7 +30,8 @@ public class HandTracker : MonoBehaviour {
 		time -= 0.5f;
 
 		// Pour éviter la pause dès le lancement du jeu
-		while(controller.Frame().Hands.IsEmpty){}
+		if(controller.IsConnected)
+			while(controller.Frame().Hands.IsEmpty){}
 	}
 	
 	// Update is called once per frame
