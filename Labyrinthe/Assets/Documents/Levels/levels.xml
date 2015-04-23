@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <levels>
-  <level id="0" img="img/default" name="Laby5x5" score="36710" time="3.29" stars="3">
+  <level id="0" img="img/default" name="Laby5x5" score="38680" time="1.32" stars="3">
     <posBille x="0" y="0">
     </posBille>
     <posExit x="4" y="4">
