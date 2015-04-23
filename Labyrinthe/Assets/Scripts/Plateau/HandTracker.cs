@@ -14,8 +14,9 @@ public class HandTracker : MonoBehaviour {
 	//public float speedRoll = 1.0f;
 	public float time;
 	private float cooldown;
-	private enum possibleStates {PLAYING = 0, PAUSE = 1};
+	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2};
 	private possibleStates currentState;
+	private bool unZoomed;
 
 	// Use this for initialization
 	void Start () {
@@ -23,11 +24,11 @@ public class HandTracker : MonoBehaviour {
 		currentState = possibleStates.PLAYING;
 		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);
 		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
-		controller.Config.SetFloat("Gesture.Circle.MinRadius", 2.0f);
 		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);
 		controller.Config.Save();
 		cooldown = time;
 		time -= 0.5f;
+		unZoomed = false;
 
 		// Pour éviter la pause dès le lancement du jeu
 		if(controller.IsConnected)
@@ -36,6 +37,10 @@ public class HandTracker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// Si on a fini le jeu on lance le menu de fin
+		if (gc.levelComplete) 
+			currentState = possibleStates.LEVEL_COMPLETE;
+
 		hands = controller.Frame ().Hands;
 
 		// Détection de la pause
@@ -57,6 +62,12 @@ public class HandTracker : MonoBehaviour {
 			case possibleStates.PAUSE:
 				StartCoroutine("updatePause");
 				break;
+
+			case possibleStates.LEVEL_COMPLETE:
+				controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, true);
+				controller.EnableGesture(Gesture.GestureType.TYPESWIPE, true);
+				LevelComplete();
+			break;
 		}
 	}
 
@@ -104,6 +115,43 @@ public class HandTracker : MonoBehaviour {
 		}
 	}
 
+	void LevelComplete(){
+		if (time >= cooldown) {
+			foreach (Gesture g in controller.Frame().Gestures()) {
+				if(g.Type == Gesture.GestureType.TYPE_SWIPE && g.State == Gesture.GestureState.STATE_STOP){
+					SwipeGesture swipe = new SwipeGesture (g);
+					
+					// swipe vers la gauche ou vers la droite
+					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
+						// Si vers la gauche, retour au menu
+						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
+						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
+						time = cooldown;
+						GameController.BackToMenu();
+						
+					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
+						// Si vers la droite, on enlève la pause
+						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
+						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
+						time = cooldown;
+						gc.NextLevel();
+					} else {
+						time = cooldown - 0.5f;
+					}
+					
+				} else if(g.Type == Gesture.GestureType.TYPECIRCLE && g.State == Gesture.GestureState.STATE_STOP){
+					// Si cercle, rejouer le niveau
+					controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
+					controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
+					time = cooldown;
+					GameController.Replay();
+				}
+			}
+		} else {
+			time += Time.deltaTime;
+		}
+	}
+
 	private void ControlByTwoHands()
 	{
 		Hand LeftHand = hands.Leftmost;
@@ -140,6 +188,18 @@ public class HandTracker : MonoBehaviour {
 		} 
 		
 		transform.localRotation = (Quaternion.Euler (rotation));
+
+		if (hands.Leftmost.SphereRadius <= 40) {
+			if(!unZoomed){
+				unZoomed = true;
+				gc.ToggleView();
+			}
+		} else {
+			if(unZoomed){
+				unZoomed = false;
+				gc.ToggleView();
+			}
+		}
 
 	}
 
