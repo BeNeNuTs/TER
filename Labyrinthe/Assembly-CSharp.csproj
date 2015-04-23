@@ -75,10 +75,17 @@
      <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
      <None Include="Assets\Documents\Save\savedLevels.xml" />
  <Reference Include="UnityEngine.UI">
+<<<<<<< HEAD
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="LeapCSharp.NET3.5">
  <HintPath>C:/Users/Cédric/Documents/GitHub/TER/Labyrinthe/Assets/LeapCSharp.NET3.5.dll</HintPath>
+=======
+ <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="LeapCSharp.NET3.5">
+ <HintPath>C:/Users/David/Documents/Master IMAGINA/S2/TER/Labyrinthe/Assets/LeapCSharp.NET3.5.dll</HintPath>
+>>>>>>> David
  </Reference>
   </ItemGroup>
   <ItemGroup>

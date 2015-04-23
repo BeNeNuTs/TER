@@ -22,7 +22,10 @@ public class LeapManager : MonoBehaviour {
 		leap.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
 		leap.Config.Save();
 		cooldown = time;
+<<<<<<< HEAD
 		time -= 0.5f;
+=======
+>>>>>>> David
 		currentState = possibleStates.MAIN_MENU;
 	}
 	

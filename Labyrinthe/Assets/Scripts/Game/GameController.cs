@@ -40,7 +40,11 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+<<<<<<< HEAD
 	public void TogglePauseMenu(){
+=======
+	private void TogglePauseMenu(){
+>>>>>>> David
 		if(levelComplete)
 			return;
 
