@@ -39,9 +39,9 @@ public class MenuController : MonoBehaviour {
 		Debug.Log("Show editor");
 
 		//Mettre le menu a gauche
-		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack, "oncomplete", "GoToEditor", "oncompletetarget", this.gameObject));
 		
-		editor.SetActive(true);
+		//editor.SetActive(true);
 		//Mettre les editor au milieu
 		iTween.MoveTo(editor, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
 	}

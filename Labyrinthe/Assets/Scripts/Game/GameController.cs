@@ -4,6 +4,7 @@ using System.Collections;
 using System.Xml;
 using System.IO;
 
+/** La classe GameController contient les fonctions qui permettent de gérer la partie en cours */
 public class GameController : MonoBehaviour {
 
 	public static Level currentLevel;
@@ -22,11 +23,12 @@ public class GameController : MonoBehaviour {
 
 	private float playerTime;
 
+	/** Initialise le nom de Labyrinthe courant */
 	void Start() {
 		levelText.text += currentLevel.name;
 	}
 
-	// Update is called once per frame
+	/** Détecte si le joueur met le jeu en pause ou change la vue de la caméra */
 	void Update () {
 
 		if (Input.GetButtonDown("Cancel")) {
@@ -40,11 +42,8 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-<<<<<<< HEAD
+	/** Active ou désactive la pause */
 	public void TogglePauseMenu(){
-=======
-	private void TogglePauseMenu(){
->>>>>>> David
 		if(levelComplete)
 			return;
 
@@ -59,11 +58,14 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	//Méthode à appeler avec les boutons
+	/** Méthode permettant de quitter le jeu
+	 *  A utiliser avec les boutons (car on ne peut pas utiliser les méthodes static)
+	 */
 	public void Quit(){
 		GameController.QuitTheGame();
 	}
 
+	/** Méthode static permettant de quitter le jeu */
 	public static void QuitTheGame(){
 		if(Application.isEditor){
 			Debug.Break();
@@ -72,25 +74,35 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	//Méthode à appeler avec les boutons
+	/** Méthode permettant de recommencer un niveau
+	 *  A utiliser avec les boutons (car on ne peut pas utiliser les méthodes static)
+	 */
 	public void ReplayB(){
 		GameController.Replay();
 	}
 
+	/** Méthode static permettant de recommencer un niveau */
 	public static void Replay(){
 		Time.timeScale = 1f;
 		LevelManager.setLevelToLoad(currentLevel.id, currentLevel.levelType); 
 	}
 
+	/** Dans la scène du menu, permet de retourner au menu principal 
+	 *	(Jouer, Editeur, Quitter)
+	 */
 	public void Back(){
 		GameController.BackToMenu();
 	}
 
+	/** Méthode static qui permet dans la scène du menu, de retourner au menu principal 
+	 *	(Jouer, Editeur, Quitter)
+	 */
 	public static void BackToMenu(){
 		Time.timeScale = 1f;
 		Application.LoadLevel("menu");
 	}
 
+	/** Recherche le niveau suivant par rapport au niveau actuel et charge la scène */
 	public void NextLevel(){
 		XmlTextReader myXmlTextReader;
 		if(currentLevel.levelType == Level.LevelType.Level)
@@ -115,22 +127,28 @@ public class GameController : MonoBehaviour {
 
 		LevelManager.setLevelToLoad(nextLevel, currentLevel.levelType);
 	}
-	
+
+	/** Retire le menu pause et continue la partie */
 	public void Continue(){
 		TogglePauseMenu();
 	}
 
+	/** Affiche les scores en fin de partie */
 	public void ShowScore() {
 		tabScore.SetActive (true);
 		tabScore.GetComponent<TabScore> ().GenerateScore (currentLevel, playerTime);
 	}
 
+	/** Permet de spécifier que le niveau est terminé ( le joueur a gagné )
+	 * 	Cette méthode est appelé par la classe ExitController
+	 */
 	public void LevelComplete(){
 		levelComplete = true;
 		playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
 		timeText.text = "Temps : " + playerTime;
 	}
 
+	/** Change la vue de la caméra Local/Global */
 	public void ToggleView(){
 		if(inGlobalView){
 			SetLocalView();
@@ -139,11 +157,11 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	/** Change la vue de la caméra en Global View */
 	private void SetGlobalView(){
 		if(iTween.Count(Camera.main.gameObject) > 0){
 			iTween.Stop(Camera.main.gameObject);
 		}
-			
 
 		inGlobalView = true;
 
@@ -154,6 +172,7 @@ public class GameController : MonoBehaviour {
 		EditorController.SetGlobalView(currentLevel.width, currentLevel.height);
 	}
 
+	/** Change la vue de la caméra en Local View */
 	private void SetLocalView(){
 		if(iTween.Count(Camera.main.gameObject) > 0){
 			iTween.Stop(Camera.main.gameObject);
@@ -167,6 +186,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	/** Arrondi un float avec <precision> chiffre après la virgule */
 	public static float RoundValue(float num, float precision)
 	{
 		return Mathf.Floor(num * precision + 0.5f) / precision;

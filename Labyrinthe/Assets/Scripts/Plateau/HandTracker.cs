@@ -11,7 +11,7 @@ public class HandTracker : MonoBehaviour {
 	public float speed;
 	public float offset;
 	public float speedPitch = 1.0f;
-	public float speedRoll = 1.0f;
+	//public float speedRoll = 1.0f;
 	public float time;
 	private float cooldown;
 	private enum possibleStates {PLAYING = 0, PAUSE = 1};
@@ -143,7 +143,7 @@ public class HandTracker : MonoBehaviour {
 
 	}
 
-	private void ControlByOneHand()
+	/*private void ControlByOneHand()
 	{
 		Hand firstHand = hands[0];
 		
@@ -167,7 +167,7 @@ public class HandTracker : MonoBehaviour {
 		} 
 		
 		GetComponent<Rigidbody>().MoveRotation (Quaternion.Euler (rotation));
-	}
+	}*/
 
 
 	private Vector3 clamp(Vector3 rotation) 
