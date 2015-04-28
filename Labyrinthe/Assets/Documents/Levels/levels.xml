@@ -12,7 +12,7 @@
     <time gold="10" silver="15" bronze="20">
     </time>
   </level>
-  <level id="1" img="img/default" name="Laby10x10" score="14060" time="15.94" stars="1">
+  <level id="1" img="img/default" name="Laby10x10" score="14149" time="15.85" stars="1">
     <posBille x="0" y="0">
     </posBille>
     <posExit x="9" y="9">

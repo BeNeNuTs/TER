@@ -8,30 +8,26 @@ public class HandTracker : MonoBehaviour {
 	public GameController gc;
 	private Controller controller;
 	private HandList hands;
-	public float speed;
-	public float offset;
-	public float speedPitch = 1.0f;
-	//public float speedRoll = 1.0f;
-	public float time;
+	public float speed, offset, speedPitch = 1.0f, time;
 	private float cooldown;
 	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2};
 	private possibleStates currentState;
-	private bool unZoomed;
-	private bool handsDetected;
+	private bool unZoomed, handsDetected;
 
 	// Use this for initialization
 	void Start () {
 		controller = new Controller ();
 		currentState = possibleStates.PLAYING;
-		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);
-		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
-		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);
+		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);				// Un swipe doit faire au moins 20cm
+		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f); 			// Un swipe doit aller à au moins 350 mm/s
+		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);// Un cercle doit faire un tour complet
 		controller.Config.Save();
 		cooldown = time;
 		time -= 0.5f;
 		unZoomed = false;
 		handsDetected = false;
 
+		// Détection des mains au début du jeu
 		if (!handsDetected && controller.IsConnected) {
 			while(controller.Frame().Hands.IsEmpty){}
 			handsDetected = true;
@@ -118,6 +114,7 @@ public class HandTracker : MonoBehaviour {
 		}
 	}
 
+	// Lorsque le niveau est terminé, on gère le menu de fin
 	void LevelComplete(){
 		if (time >= cooldown) {
 			foreach (Gesture g in controller.Frame().Gestures()) {
@@ -155,6 +152,7 @@ public class HandTracker : MonoBehaviour {
 		}
 	}
 
+	// Méthode qui gère le plateau lors du jeu
 	private void ControlByTwoHands()
 	{
 		Hand LeftHand = hands.Leftmost;
@@ -206,6 +204,7 @@ public class HandTracker : MonoBehaviour {
 
 	}
 
+	// Méthode censée gérer un controle à une main, jugé peu convénient
 	/*private void ControlByOneHand()
 	{
 		Hand firstHand = hands[0];
@@ -233,6 +232,7 @@ public class HandTracker : MonoBehaviour {
 	}*/
 
 
+	// Fonction qui retourne la rotation du labyrinthe
 	private Vector3 clamp(Vector3 rotation) 
 	{
 		if (rotation.x > offset) {
