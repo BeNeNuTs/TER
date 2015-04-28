@@ -17,6 +17,7 @@ public class HandTracker : MonoBehaviour {
 	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2};
 	private possibleStates currentState;
 	private bool unZoomed;
+	private bool handsDetected;
 
 	// Use this for initialization
 	void Start () {
@@ -29,12 +30,14 @@ public class HandTracker : MonoBehaviour {
 		cooldown = time;
 		time -= 0.5f;
 		unZoomed = false;
+		handsDetected = false;
 
-		// Pour éviter la pause dès le lancement du jeu
-		if(controller.IsConnected)
+		if (!handsDetected && controller.IsConnected) {
 			while(controller.Frame().Hands.IsEmpty){}
+			handsDetected = true;
+		}
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		// Si on a fini le jeu on lance le menu de fin
@@ -130,7 +133,7 @@ public class HandTracker : MonoBehaviour {
 						GameController.BackToMenu();
 						
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
-						// Si vers la droite, on enlève la pause
+						// Si vers la droite, on passe au level suivant
 						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
 						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;

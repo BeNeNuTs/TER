@@ -26,6 +26,7 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	void OnLevelWasLoaded(int level) {
+		Debug.Log ("Variable level = " + level + " et levelToLoad" + levelToLoad);
 		if(level == levelMaze){
 			if(levelToLoad < 0){
 				Debug.LogError("Erreur levelToLoad < 0");
