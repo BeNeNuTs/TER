@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour {
 
 	[HideInInspector]
 	public bool levelComplete = false;
+	[HideInInspector]
+	public bool handsChecker = false;
 
 	private bool inPause = false;
 	private bool inGlobalView = false;
@@ -37,8 +39,10 @@ public class GameController : MonoBehaviour {
 			ToggleView();
 		}
 
-		if (!levelComplete) {
-			timeText.text = "Temps : " + RoundValue (Time.timeSinceLevelLoad, 100f);
+		if (!levelComplete && handsChecker) {
+			playerTime += Time.deltaTime;
+			playerTime = RoundValue (playerTime, 100f);
+			timeText.text = "Temps : " + playerTime;
 		}
 	}
 
@@ -124,7 +128,7 @@ public class GameController : MonoBehaviour {
 				break;
 			}
 		}
-
+		Debug.Log ("Niveau trouvé: " + nextLevel);
 		LevelManager.setLevelToLoad(nextLevel, currentLevel.levelType);
 	}
 
@@ -143,11 +147,8 @@ public class GameController : MonoBehaviour {
 	 * 	Cette méthode est appelé par la classe ExitController
 	 */
 	public void LevelComplete(){
-		if(levelComplete)
-			return;
-
 		levelComplete = true;
-		playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
+		//playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
 		timeText.text = "Temps : " + playerTime;
 	}
 

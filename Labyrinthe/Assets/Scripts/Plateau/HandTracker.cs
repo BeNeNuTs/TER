@@ -8,33 +8,25 @@ public class HandTracker : MonoBehaviour {
 	public GameController gc;
 	private Controller controller;
 	private HandList hands;
-	public float speed;
-	public float offset;
-	public float speedPitch = 1.0f;
-	//public float speedRoll = 1.0f;
-	public float time;
+	public float speed, offset, speedPitch = 1.0f, time;
 	private float cooldown;
-	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2};
+	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2, WAITING = 3};
 	private possibleStates currentState;
 	private bool unZoomed;
 
 	// Use this for initialization
 	void Start () {
 		controller = new Controller ();
-		currentState = possibleStates.PLAYING;
-		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);
-		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
-		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);
+		currentState = possibleStates.WAITING;
+		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);				// Un swipe doit faire au moins 20cm
+		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f); 			// Un swipe doit aller à au moins 350 mm/s
+		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);// Un cercle doit faire un tour complet
 		controller.Config.Save();
 		cooldown = time;
 		time -= 0.5f;
 		unZoomed = false;
-
-		// Pour éviter la pause dès le lancement du jeu
-		if(controller.IsConnected)
-			while(controller.Frame().Hands.IsEmpty){}
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		// Si on a fini le jeu on lance le menu de fin
@@ -67,6 +59,13 @@ public class HandTracker : MonoBehaviour {
 				controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, true);
 				controller.EnableGesture(Gesture.GestureType.TYPESWIPE, true);
 				LevelComplete();
+			break;
+
+			case possibleStates.WAITING:
+				if(controller.Frame ().Hands.Count == 2){
+					currentState = possibleStates.PLAYING;
+					gc.handsChecker = true;
+				}
 			break;
 		}
 	}
@@ -115,6 +114,7 @@ public class HandTracker : MonoBehaviour {
 		}
 	}
 
+	// Lorsque le niveau est terminé, on gère le menu de fin
 	void LevelComplete(){
 		if (time >= cooldown) {
 			foreach (Gesture g in controller.Frame().Gestures()) {
@@ -130,11 +130,12 @@ public class HandTracker : MonoBehaviour {
 						GameController.BackToMenu();
 						
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
-						// Si vers la droite, on enlève la pause
+						// Si vers la droite, on passe au level suivant
 						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
 						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						gc.NextLevel();
+						return;
 					} else {
 						time = cooldown - 0.5f;
 					}
@@ -152,6 +153,7 @@ public class HandTracker : MonoBehaviour {
 		}
 	}
 
+	// Méthode qui gère le plateau lors du jeu
 	private void ControlByTwoHands()
 	{
 		Hand LeftHand = hands.Leftmost;
@@ -189,7 +191,7 @@ public class HandTracker : MonoBehaviour {
 		
 		transform.localRotation = (Quaternion.Euler (rotation));
 
-		/*if (hands.Leftmost.SphereRadius <= 40) {
+		if (hands.Leftmost.SphereRadius <= 40) {
 			if(!unZoomed){
 				unZoomed = true;
 				gc.ToggleView();
@@ -199,10 +201,11 @@ public class HandTracker : MonoBehaviour {
 				unZoomed = false;
 				gc.ToggleView();
 			}
-		}*/
+		}
 
 	}
 
+	// Méthode censée gérer un controle à une main, jugé peu convénient
 	/*private void ControlByOneHand()
 	{
 		Hand firstHand = hands[0];
@@ -230,6 +233,7 @@ public class HandTracker : MonoBehaviour {
 	}*/
 
 
+	// Fonction qui retourne la rotation du labyrinthe
 	private Vector3 clamp(Vector3 rotation) 
 	{
 		if (rotation.x > offset) {

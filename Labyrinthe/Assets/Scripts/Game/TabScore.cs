@@ -16,10 +16,12 @@ public class TabScore : MonoBehaviour {
 	private int starPoint = 10000;
 	private AudioSource sound;
 
+	/** Récupère le composant AudioSource du gameObject pour pouvoir lancer le sons pour les étoiles */
 	void Start(){
 		sound = GetComponent<AudioSource>();
 	}
 
+	/** Génère le score, le temps et le nombre d'étoile du joueur à la fin d'une partie */
 	public void GenerateScore(Level currentLevel, float time){
 		int nbStars = 0;
 		float beatTime = 0f;
@@ -60,6 +62,7 @@ public class TabScore : MonoBehaviour {
 
 	}
 
+	/** Sauvegarde les meilleurs scores dans le XML pour le niveau joué */
 	private void SaveHighScore(int score, float time, int nbStars){
 		XmlTextReader myXmlTextReader;
 		if(GameController.currentLevel.levelType == Level.LevelType.Level){
@@ -97,6 +100,7 @@ public class TabScore : MonoBehaviour {
 		Debug.LogError("Level to update high score doesn't find.");
 	}
 
+	/** Permet d'afficher les étoiles avec une animation */
 	IEnumerator ShowStar(int nbStars, float delay){
 		yield return new WaitForSeconds(delay);
 

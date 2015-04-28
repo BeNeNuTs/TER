@@ -1,4 +1,5 @@
-﻿[System.Serializable]
+﻿/** Structure permettant de définir un Vecteur à 2 dimensions en X et Z */
+[System.Serializable]
 public struct IntVector2 {
 	
 	public int x, z;

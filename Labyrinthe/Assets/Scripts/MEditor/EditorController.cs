@@ -231,7 +231,7 @@ public class EditorController : MonoBehaviour {
 		ShowInfo("Niveau sauvegardé");
 	}
 
-
+	/** Supprime un Labyrinthe du fichier savedLevels.xml */
 	public static void RemoveLevel(int idLevel){
 		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
 		
@@ -259,6 +259,7 @@ public class EditorController : MonoBehaviour {
 		Debug.LogError("Level to remove doesn't find.");
 	}
 
+	/** Vérifie si un niveau n'existe pas déjà dans le fichier savedLevels.xml */
 	public static bool LevelAlreadyExist(IntVector2 posBille, IntVector2 posExit, int width, int height, string lines, string columns){
 		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
 		

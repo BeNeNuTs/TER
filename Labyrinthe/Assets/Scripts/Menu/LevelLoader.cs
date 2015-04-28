@@ -4,6 +4,7 @@ using System.Collections;
 public class LevelLoader : MonoBehaviour {
 
 	public int id = 0;
+	public Level.LevelType type;
 
 	// Use this for initialization
 	void Start () {
@@ -17,7 +18,8 @@ public class LevelLoader : MonoBehaviour {
 
 	void OnTriggerEnter(Collider collider)
 	{
-		id = collider.gameObject.GetComponent<CubeLevel>().id;
+		id = collider.gameObject.GetComponent<CubeLevel> ().id;
+		type = collider.gameObject.GetComponent<CubeLevel> ().type;
 		Debug.Log ("ID : " + id);
 		//LevelManager.setLevelToLoad(collider.gameObject.GetComponent<CubeLevel>().id, collider.gameObject.GetComponent<CubeLevel>().type );
 
