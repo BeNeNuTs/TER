@@ -10,14 +10,14 @@ public class HandTracker : MonoBehaviour {
 	private HandList hands;
 	public float speed, offset, speedPitch = 1.0f, time;
 	private float cooldown;
-	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2};
+	private enum possibleStates {PLAYING = 0, PAUSE = 1, LEVEL_COMPLETE = 2, WAITING = 3};
 	private possibleStates currentState;
-	private bool unZoomed, handsDetected;
+	private bool unZoomed;
 
 	// Use this for initialization
 	void Start () {
 		controller = new Controller ();
-		currentState = possibleStates.PLAYING;
+		currentState = possibleStates.WAITING;
 		controller.Config.SetFloat("Gesture.Swipe.MinLength", 200.0f);				// Un swipe doit faire au moins 20cm
 		controller.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f); 			// Un swipe doit aller à au moins 350 mm/s
 		controller.Config.SetFloat("Gesture.Circle.MinArc", (float) Math.PI * 2.0f);// Un cercle doit faire un tour complet
@@ -25,13 +25,6 @@ public class HandTracker : MonoBehaviour {
 		cooldown = time;
 		time -= 0.5f;
 		unZoomed = false;
-		handsDetected = false;
-
-		// Détection des mains au début du jeu
-		if (!handsDetected && controller.IsConnected) {
-			while(controller.Frame().Hands.IsEmpty){}
-			handsDetected = true;
-		}
 	}
 
 	// Update is called once per frame
@@ -66,6 +59,13 @@ public class HandTracker : MonoBehaviour {
 				controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, true);
 				controller.EnableGesture(Gesture.GestureType.TYPESWIPE, true);
 				LevelComplete();
+			break;
+
+			case possibleStates.WAITING:
+				if(controller.Frame ().Hands.Count == 2){
+					currentState = possibleStates.PLAYING;
+					gc.handsChecker = true;
+				}
 			break;
 		}
 	}
@@ -135,6 +135,7 @@ public class HandTracker : MonoBehaviour {
 						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						gc.NextLevel();
+						return;
 					} else {
 						time = cooldown - 0.5f;
 					}
