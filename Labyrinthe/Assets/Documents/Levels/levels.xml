@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <levels>
-  <level id="0" img="img/default" name="Laby5x5" score="40000" time="0" stars="3">
+  <level id="0" name="Laby5x5" score="40000" time="0" stars="3">
     <posBille x="0" y="0">
     </posBille>
     <posExit x="4" y="4">
@@ -12,7 +12,7 @@
     <time gold="10" silver="15" bronze="20">
     </time>
   </level>
-  <level id="1" img="img/default" name="Laby10x10" score="14149" time="15.85" stars="1">
+  <level id="1" name="Laby10x10" score="14149" time="15.85" stars="1">
     <posBille x="0" y="0">
     </posBille>
     <posExit x="9" y="9">
@@ -24,7 +24,7 @@
     <time gold="10" silver="15" bronze="20">
     </time>
   </level>
-  <level id="2" img="img/default" name="Test" score="31180" time="8.82" stars="3">
+  <level id="2" name="Test" score="31180" time="8.82" stars="3">
     <posBille x="0" y="1">
     </posBille>
     <posExit x="3" y="1">
@@ -36,7 +36,7 @@
     <time gold="10" silver="15" bronze="20">
     </time>
   </level>
-  <level id="3" img="img/default" name="LabyTest" score="31310" time="8.69" stars="3">
+  <level id="3" name="LabyTest" score="31310" time="8.69" stars="3">
     <posBille x="3" y="1">
     </posBille>
     <posExit x="0" y="1">

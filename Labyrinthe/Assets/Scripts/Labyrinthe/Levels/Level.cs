@@ -9,7 +9,7 @@ public class Level {
 
 	public int id;
 	public string name;
-	public string img;
+	//public string img;
 	public IntVector2 posBille;
 	public IntVector2 posExit;
 
@@ -34,7 +34,7 @@ public class Level {
 	public Level(){
 		this.id = 0;
 		this.name = "";
-		this.img = "";
+		//this.img = "";
 		this.posBille = new IntVector2();
 		this.posExit = new IntVector2();
 		this.width = 0;

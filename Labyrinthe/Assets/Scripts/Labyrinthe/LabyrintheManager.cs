@@ -59,7 +59,7 @@ public class LabyrintheManager : MonoBehaviour {
 					//Level name & id //////////////////////////////////////
 					level.id = int.Parse(myXmlTextReader.GetAttribute("id"));
 					level.name = myXmlTextReader.GetAttribute("name");
-					level.img = myXmlTextReader.GetAttribute("img");
+					//level.img = myXmlTextReader.GetAttribute("img");
 					string score = myXmlTextReader.GetAttribute("score");
 					if(score != "")
 						level.score = uint.Parse(score);
@@ -150,7 +150,7 @@ public class LabyrintheManager : MonoBehaviour {
 
 		currentLevel.levelType = levelType;
 
-		if (currentLevel.lines.Length != currentLevel.width || currentLevel.columns.Length != currentLevel.height) {
+		if (currentLevel.lines.Length != currentLevel.height || currentLevel.columns.Length != currentLevel.width) {
 			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Lignes : " + currentLevel.lines.Length + " Colonnes : " + currentLevel.columns.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
 			return;
 		}

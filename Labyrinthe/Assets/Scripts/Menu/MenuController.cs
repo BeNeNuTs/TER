@@ -41,14 +41,15 @@ public class MenuController : MonoBehaviour {
 	}
 
 	public void Editor(){
-		Debug.Log("Show editor");
 
 		//Mettre le menu a gauche
-		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack, "oncomplete", "GoToEditor", "oncompletetarget", this.gameObject));
+		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		//Mettre le titre à gauche
+		iTween.MoveTo(transform.GetChild(0).gameObject, iTween.Hash("position", new Vector3(Screen.width * 2, transform.GetChild(0).transform.position.y, 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack, "oncomplete", "GoToEditor", "oncompletetarget", this.gameObject));
 		
 		//editor.SetActive(true);
 		//Mettre les editor au milieu
-		iTween.MoveTo(editor, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		//iTween.MoveTo(editor, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
 	}
 
 	public void BackToMenu(){

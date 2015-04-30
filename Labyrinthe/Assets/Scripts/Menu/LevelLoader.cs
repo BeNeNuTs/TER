@@ -5,6 +5,7 @@ public class LevelLoader : MonoBehaviour {
 
 	public int id = 0;
 	public Level.LevelType type;
+	public GameObject cube;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +21,8 @@ public class LevelLoader : MonoBehaviour {
 	{
 		id = collider.gameObject.GetComponent<CubeLevel> ().id;
 		type = collider.gameObject.GetComponent<CubeLevel> ().type;
-		Debug.Log ("ID : " + id);
+		cube = collider.gameObject;
+		Debug.Log ("ID du trigger: " + id);
 		//LevelManager.setLevelToLoad(collider.gameObject.GetComponent<CubeLevel>().id, collider.gameObject.GetComponent<CubeLevel>().type );
 
 
