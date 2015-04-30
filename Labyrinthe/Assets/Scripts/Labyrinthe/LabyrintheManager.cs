@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using System;
 
+/** Classe permettant de gérer un Labyrinthe */
 public class LabyrintheManager : MonoBehaviour {
 
 	public static string folderDocs = "/Documents";
@@ -19,11 +20,13 @@ public class LabyrintheManager : MonoBehaviour {
 
 	public Maze maze;
 
+	/** Initialise le Labyrinthe courant à null */
 	void Start(){
 		currentLevel = null;
 		//GenerateLabyrinthe(1);
 	}
 
+	/** Méthode static permettant de récupèrer le levels.xml */
 	public static XmlTextReader GetLevelXML(){
 		CheckIfFolderDocsExist ();
 		
@@ -33,6 +36,7 @@ public class LabyrintheManager : MonoBehaviour {
 		return new XmlTextReader(path);
 	}
 
+	/** Méthode static permettant de récupèrer le savedLevels.xml */
 	public static XmlTextReader GetSavedLevelXML(){
 		CheckIfFolderDocsExist ();
 		
@@ -42,6 +46,7 @@ public class LabyrintheManager : MonoBehaviour {
 		return new XmlTextReader(path);
 	}
 
+	/** Méthode static permettant de charger un niveau en particulier dans savedLevels.xml ou levels.xml */
 	public static Level LoadLevel(XmlTextReader myXmlTextReader, int idLevel){
 		Level level = new Level();
 		bool levelFind = false;
@@ -54,7 +59,7 @@ public class LabyrintheManager : MonoBehaviour {
 					//Level name & id //////////////////////////////////////
 					level.id = int.Parse(myXmlTextReader.GetAttribute("id"));
 					level.name = myXmlTextReader.GetAttribute("name");
-					level.img = myXmlTextReader.GetAttribute("img");
+					//level.img = myXmlTextReader.GetAttribute("img");
 					string score = myXmlTextReader.GetAttribute("score");
 					if(score != "")
 						level.score = uint.Parse(score);
@@ -114,6 +119,9 @@ public class LabyrintheManager : MonoBehaviour {
 		}
 	}
 
+	/** Méthode static permettant de récupèrer le chemin d'un fichier en fonction du dossier dans lequel il est placé
+	 *  @return string, chemin du fichier spécifié
+	 */
 	public static string SearchPath(string folder, string file){
 		string [] path;
 
@@ -130,6 +138,7 @@ public class LabyrintheManager : MonoBehaviour {
 		return "";
 	}
 
+	/** Permet de générer le Labyrinthe en fonction d'un id */
 	public void GenerateLabyrinthe(int level, Level.LevelType levelType){
 		if(levelType == Level.LevelType.Level)
 			currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
@@ -141,7 +150,7 @@ public class LabyrintheManager : MonoBehaviour {
 
 		currentLevel.levelType = levelType;
 
-		if (currentLevel.lines.Length != currentLevel.width || currentLevel.columns.Length != currentLevel.height) {
+		if (currentLevel.lines.Length != currentLevel.height || currentLevel.columns.Length != currentLevel.width) {
 			Debug.LogError("Le level courant ne contient pas autant de pièces que sa taille. Lignes : " + currentLevel.lines.Length + " Colonnes : " + currentLevel.columns.Length + " Taille X : " + currentLevel.width + " Taille Z : " + currentLevel.height);
 			return;
 		}
@@ -155,7 +164,7 @@ public class LabyrintheManager : MonoBehaviour {
 		}
 
 		GameController.currentLevel = currentLevel;
-		StartCoroutine(maze.GenerateLevel(currentLevel));
+		maze.GenerateLevel(currentLevel);
 		bille = Instantiate(bille) as GameObject;
 		bille.transform.position = new Vector3(maze.GetCell(currentLevel.posBille).transform.position.x, 0.4f, maze.GetCell(currentLevel.posBille).transform.position.z);
 		bille.transform.parent = maze.transform;
@@ -165,6 +174,7 @@ public class LabyrintheManager : MonoBehaviour {
 		exit.transform.parent = maze.transform;
 	}
 
+	/** Vérifie si le dossier /Documents existe bien, sinon la fonction le crée */
 	public static void CheckIfFolderDocsExist(){
 		if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) {
 			bool folderExist = System.IO.Directory.Exists (Application.dataPath + folderDocs);
@@ -179,6 +189,7 @@ public class LabyrintheManager : MonoBehaviour {
 		}
 	}
 
+	/** Getter de l'id du niveau courant */
 	public int LevelId {
 		get {
 			return currentLevel.id;

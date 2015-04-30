@@ -13,6 +13,7 @@ public class CameraFollow : MonoBehaviour {
 	void FixedUpdate() {
 		if(target == null){
 			target = GameObject.FindGameObjectWithTag("Player") as GameObject;
+			return;
 		}
 
 		Vector3 targetCamPos = target.transform.position + offset;

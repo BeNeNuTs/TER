@@ -33,34 +33,47 @@ public class LeapManager : MonoBehaviour {
 					SwipeGesture swipe = new SwipeGesture (g);
 					// Vers la gauche
 					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
-						if(currentState == possibleStates.MAIN_MENU){
-							mc.Play ();
-							currentState = possibleStates.LEVEL_MENU;
-							time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-						} else if(currentState == possibleStates.EDITOR_MENU){
-							mc.BackToMenu();
-							currentState = possibleStates.MAIN_MENU;
-							time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-						} else {
-							time = cooldown - 0.5f;
+						switch(currentState){
+							case possibleStates.MAIN_MENU:
+								mc.Play ();
+								currentState = possibleStates.LEVEL_MENU;
+								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
+								break;
+							case possibleStates.EDITOR_MENU:
+								mc.BackToMenu();
+								currentState = possibleStates.MAIN_MENU;
+								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
+								break;
+							default:
+								time = cooldown - 0.5f;
+								break;
 						}
 					// Vers la droite
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
-						if(currentState == possibleStates.MAIN_MENU){
-							mc.Editor();
-							currentState = possibleStates.EDITOR_MENU;
-							time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-						} else if(currentState == possibleStates.LEVEL_MENU){
-							mc.BackToMenu();
-							currentState = possibleStates.MAIN_MENU;
-							time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-						} else {
-							time = cooldown - 0.5f;
+						switch(currentState){
+							case possibleStates.MAIN_MENU:
+								mc.Editor();
+								currentState = possibleStates.EDITOR_MENU;
+								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
+								break;
+							case possibleStates.LEVEL_MENU:
+								mc.BackToMenu();
+								currentState = possibleStates.MAIN_MENU;
+								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
+								break;
+							default:
+								time = cooldown - 0.5f;
+								break;
 						}
 					// Vers l'avant
 					} else if (Math.Abs (swipe.Direction.z) > Math.Abs (swipe.Direction.x) && Math.Abs (swipe.Direction.z) > Math.Abs (swipe.Direction.y) && swipe.Direction.z < 0.0f) {
-						if(currentState == possibleStates.MAIN_MENU){
-							mc.Quit();
+						switch(currentState){
+							case possibleStates.MAIN_MENU:
+								mc.Quit();
+								break;
+							default:
+								time = cooldown - 0.5f;
+								break;
 						}
 					}
 				}

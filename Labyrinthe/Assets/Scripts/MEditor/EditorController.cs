@@ -116,6 +116,7 @@ public class EditorController : MonoBehaviour {
 		saveButton.interactable = false;
 		deadEndScript.clear();
 		ResetRotationLabyrinthe();
+		ResetDisplay();
 
 		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
 
@@ -131,8 +132,8 @@ public class EditorController : MonoBehaviour {
 		XmlNode xmlNewLevel = xdoc.CreateNode(XmlNodeType.Element, "level", null);
 		XmlAttribute id = xdoc.CreateAttribute("id");
 		id.Value = savedLevel.ChildNodes.Count.ToString();
-		XmlAttribute img = xdoc.CreateAttribute("img");
-		img.Value = "img/" + id.Value;
+		/*XmlAttribute img = xdoc.CreateAttribute("img");
+		img.Value = "img/" + id.Value;*/
 		XmlAttribute name = xdoc.CreateAttribute("name");
 		name.Value = nameLab.text;
 		XmlAttribute score = xdoc.CreateAttribute("score");
@@ -142,7 +143,7 @@ public class EditorController : MonoBehaviour {
 		XmlAttribute stars = xdoc.CreateAttribute("stars");
 		stars.Value = "";
 		xmlNewLevel.Attributes.Append(id);
-		xmlNewLevel.Attributes.Append(img);
+		//xmlNewLevel.Attributes.Append(img);
 		xmlNewLevel.Attributes.Append(name);
 		xmlNewLevel.Attributes.Append(score);
 		xmlNewLevel.Attributes.Append(time);
@@ -164,7 +165,7 @@ public class EditorController : MonoBehaviour {
 		Destroy(rt);
 		
 		byte[] bytes = screenShot.EncodeToPNG();
-		string filename = Application.dataPath + "/Resources/img/" + id.Value + ".png";
+		string filename = Application.dataPath + "/Resources/img/savedLevels/" + id.Value + ".png";
 		System.IO.File.WriteAllBytes(filename, bytes);
 		//////////////
 
@@ -231,7 +232,7 @@ public class EditorController : MonoBehaviour {
 		ShowInfo("Niveau sauvegardé");
 	}
 
-
+	/** Supprime un Labyrinthe du fichier savedLevels.xml */
 	public static void RemoveLevel(int idLevel){
 		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
 		
@@ -259,6 +260,7 @@ public class EditorController : MonoBehaviour {
 		Debug.LogError("Level to remove doesn't find.");
 	}
 
+	/** Vérifie si un niveau n'existe pas déjà dans le fichier savedLevels.xml */
 	public static bool LevelAlreadyExist(IntVector2 posBille, IntVector2 posExit, int width, int height, string lines, string columns){
 		XmlTextReader myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
 		
@@ -426,6 +428,18 @@ public class EditorController : MonoBehaviour {
 					cell.gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = Color.white;
 					return;
 				}
+			}
+		}
+	}
+
+	public void ResetDisplay(){
+		if(!mazeIsGenerated)
+			return;
+		
+		for(int i = 0 ; i < maze.size.x ; i++){
+			for(int j = 0 ; j < maze.size.z ; j++){
+				MazeCell cell = maze.GetCell(new IntVector2(i,j));
+				cell.gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = Color.white;
 			}
 		}
 	}

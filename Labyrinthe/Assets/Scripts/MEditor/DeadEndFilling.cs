@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+/** Classe définissant l'algorithme de dead-end filling */
 public class DeadEndFilling : MonoBehaviour {
 
 	public float generationStepDelay;
@@ -13,7 +14,7 @@ public class DeadEndFilling : MonoBehaviour {
 	private IntVector2 start;
 	private IntVector2 end;
 
-	//Compte le nombre de passages dans une cellule
+	/** Compte le nombre de passages dans une cellule */
 	private int countPassage(int x, int z){
 		int res = 0;
 		for (int i = 0; i != MazeDirections.Count; ++i) {
@@ -23,7 +24,7 @@ public class DeadEndFilling : MonoBehaviour {
 		return res;
 	}
 
-	//Initialise les variables de la classe
+	/** Initialise les variables de la classe */
 	private void init(Maze maze, IntVector2 start, IntVector2 end){
 		m = maze;
 		this.start = start;
@@ -44,7 +45,7 @@ public class DeadEndFilling : MonoBehaviour {
 		}
 	}
 
-	// Remplit les trous dans le labyrinthe à partir des coordonnées indiquées
+	/** Remplit les trous dans le labyrinthe à partir des coordonnées indiquées */
 	private void fillMaze(IntVector2 coords){
 		// On vérifie qu'on est pas au début ou à la fin
 		if ((coords.x != start.x || coords.z != start.z) && (coords.x != end.x || coords.z != end.z)) {
@@ -63,12 +64,13 @@ public class DeadEndFilling : MonoBehaviour {
 		}
 	}
 
+	/** Colorie avec la couleur c, la cellule aux coordonnées passées en paramètres */
 	private void drawBadPath(int x, int z, Color c){
 		m.GetCell (new IntVector2(x,z)).gameObject.GetComponentInChildren<MeshRenderer> ().materials [0].color = c;
 	}
 
 
-	// Algorithme du dead-end filling
+	/** Algorithme du dead-end filling */
 	public void deadEndFilling(Maze maze, IntVector2 start, IntVector2 end){
 		// Initialisation des variables
 		init (maze, start, end);

@@ -9,10 +9,12 @@ public class PauseMenu : MonoBehaviour {
 
 	public GameObject [] fillStars;
 
+	/** A l'appel du Start, génère l'affichage des meilleurs scores */
 	void Start(){
 		GenerateBestScore();
 	}
 
+	/** Méthode permettant de récupèrer les meilleurs scores du joueur */
 	public void GenerateBestScore(){
 
 		if(GameController.currentLevel.score != null)

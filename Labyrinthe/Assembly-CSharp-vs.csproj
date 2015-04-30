@@ -64,8 +64,8 @@
      <Compile Include="Assets\Scripts\MEditor\EditorController.cs" />
      <Compile Include="Assets\Scripts\MEditor\SliderController.cs" />
      <Compile Include="Assets\Scripts\Menu\AnimArrow.cs" />
+     <Compile Include="Assets\Scripts\Menu\AnimRestart.cs" />
      <Compile Include="Assets\Scripts\Menu\CubeLevel.cs" />
-     <Compile Include="Assets\Scripts\Menu\Icon.cs" />
      <Compile Include="Assets\Scripts\Menu\LeapManager.cs" />
      <Compile Include="Assets\Scripts\Menu\LevelLoader.cs" />
      <Compile Include="Assets\Scripts\Menu\LevelMenuManager.cs" />

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/** Classe Maze permettant de définir, structurer et créer un Labyrinthe */
 public class Maze : MonoBehaviour {
 	public MazeCell cellPrefab;
 	public float generationStepDelay;
@@ -11,13 +12,15 @@ public class Maze : MonoBehaviour {
 
 	private MazeCell[,] cells;
 
+	/** Permet de créer un passage entre 2 cellules */
 	private void CreatePassage (MazeCell cell, MazeCell otherCell, MazeDirection direction) {
 		MazePassage passage = Instantiate(passagePrefab) as MazePassage;
 		passage.Initialize(cell, otherCell, direction);
 		passage = Instantiate(passagePrefab) as MazePassage;
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
 	}
-	
+
+	/** Permet de créer un mur entre 2 cellules */
 	private void CreateWall (MazeCell cell, MazeCell otherCell, MazeDirection direction) {
 		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
 		wall.Initialize(cell, otherCell, direction);
@@ -27,14 +30,17 @@ public class Maze : MonoBehaviour {
 		}
 	}
 
+	/** Retourne la cellule aux coordonnées passées en paramètre */
 	public MazeCell GetCell (IntVector2 coordinates) {
 		return cells[coordinates.x, coordinates.z];
 	}
 
+	/** Créer la première cellule à des coordonnées aléatoire */
 	private void DoFirstGenerationStep (List<MazeCell> activeCells) {
 		activeCells.Add(CreateCell(RandomCoordinates));
 	}
-	
+
+	/** Créer les cellules suivantes en fonction de la position de la première cellule crée avec la fonction DoFirstGenerationStep */
 	private void DoNextGenerationStep (List<MazeCell> activeCells) {
 		int currentIndex = activeCells.Count - 1;
 		MazeCell currentCell = activeCells[currentIndex];
@@ -60,7 +66,8 @@ public class Maze : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator GenerateLevel(Level level){
+	/** Permet de générer un niveau défini dans un XML */
+	public void GenerateLevel(Level level){
 		IntVector2 _size = new IntVector2(level.width, level.height);
 		size = _size;
 		cells = new MazeCell[size.x, size.z];
@@ -89,7 +96,7 @@ public class Maze : MonoBehaviour {
 			line = level.lines[x].Split('-');
 			if(line.Length + 1 != size.x){
 				Debug.LogError("Nombre de mur insuffisant par rapport à la taille du labyrinthe : line");
-				yield return null;
+				return;
 			}
 			
 			for(int i = 0 ; i < line.Length ; i++){
@@ -102,7 +109,7 @@ public class Maze : MonoBehaviour {
 			column = level.columns[z].Split('-');
 			if(column.Length + 1 != size.z){
 				Debug.LogError("Nombre de mur insuffisant par rapport à la taille du labyrinthe : colum");
-				yield return null;
+				return;
 			}
 
 			for(int i = 0 ; i < column.Length ; i++){
@@ -113,6 +120,7 @@ public class Maze : MonoBehaviour {
 		}
 	}
 
+	/** Génère un Labyrinthe aléatoire sans coroutine */
 	public void GenerateNoCoroutine (IntVector2 _size) {
 		size = _size;
 		cells = new MazeCell[size.x, size.z];
@@ -123,6 +131,7 @@ public class Maze : MonoBehaviour {
 		}
 	}
 
+	/** Génère un Labyrinthe aléatoire avec coroutine afin de voir la construction pas à pas */
 	public IEnumerator Generate (IntVector2 _size) {
 		size = _size;
 		WaitForSeconds delay = new WaitForSeconds(generationStepDelay);
@@ -134,7 +143,8 @@ public class Maze : MonoBehaviour {
 			DoNextGenerationStep(activeCells);
 		}
 	}
-	
+
+	/** Permet de créer une cellule aux coordonnées passées en paramètre */
 	private MazeCell CreateCell (IntVector2 coordinates) {
 		MazeCell newCell = Instantiate(cellPrefab) as MazeCell;
 		cells[coordinates.x, coordinates.z] = newCell;
@@ -145,12 +155,14 @@ public class Maze : MonoBehaviour {
 		return newCell;
 	}
 
+	/** Getter qui renvoie des coordonées de cellules aléatoire */
 	public IntVector2 RandomCoordinates {
 		get {
 			return new IntVector2(Random.Range(0, size.x), Random.Range(0, size.z));
 		}
 	}
-	
+
+	/** Retourne vrai si les coordonnées passées en paramètres sont comprise dans la taille du Labyrinthe, faux sinon */
 	public bool ContainsCoordinates (IntVector2 coordinate) {
 		return coordinate.x >= 0 && coordinate.x < size.x && coordinate.z >= 0 && coordinate.z < size.z;
 	}

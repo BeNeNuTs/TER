@@ -6,6 +6,7 @@ using Leap;
 public class HandTracker : MonoBehaviour {
 
 	public GameController gc;
+	public GameObject menuPause;
 	private Controller controller;
 	private HandList hands;
 	public float speed, offset, speedPitch = 1.0f, time;
@@ -30,8 +31,11 @@ public class HandTracker : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// Si on a fini le jeu on lance le menu de fin
-		if (gc.levelComplete) 
+		if (currentState != possibleStates.LEVEL_COMPLETE && gc.levelComplete) {
+			controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, true);
+			controller.EnableGesture(Gesture.GestureType.TYPESWIPE, true);
 			currentState = possibleStates.LEVEL_COMPLETE;
+		}
 
 		hands = controller.Frame ().Hands;
 
@@ -56,15 +60,16 @@ public class HandTracker : MonoBehaviour {
 				break;
 
 			case possibleStates.LEVEL_COMPLETE:
-				controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, true);
-				controller.EnableGesture(Gesture.GestureType.TYPESWIPE, true);
 				LevelComplete();
 			break;
 
 			case possibleStates.WAITING:
 				if(controller.Frame ().Hands.Count == 2){
+					menuPause.SetActive(false);
 					currentState = possibleStates.PLAYING;
 					gc.handsChecker = true;
+				}else if(!menuPause.activeSelf){
+					menuPause.SetActive(true);
 				}
 			break;
 		}
@@ -124,15 +129,15 @@ public class HandTracker : MonoBehaviour {
 					// swipe vers la gauche ou vers la droite
 					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
 						// Si vers la gauche, retour au menu
-						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
+						//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
+						//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						GameController.BackToMenu();
 						
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
 						// Si vers la droite, on passe au level suivant
-						controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-						controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
+						//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
+						//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						gc.NextLevel();
 						return;
@@ -142,8 +147,8 @@ public class HandTracker : MonoBehaviour {
 					
 				} else if(g.Type == Gesture.GestureType.TYPECIRCLE && g.State == Gesture.GestureState.STATE_STOP){
 					// Si cercle, rejouer le niveau
-					controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-					controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
+					//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
+					//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 					time = cooldown;
 					GameController.Replay();
 				}

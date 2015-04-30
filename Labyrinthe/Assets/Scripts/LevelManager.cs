@@ -8,7 +8,8 @@ public class LevelManager : MonoBehaviour {
 
 	public static int levelToLoad = -1;
 	public static Level.LevelType levelTypeToLoad;
-	
+
+	/** Permet de définir que la classe LevelManger est un singleton */
 	void Awake () {
 		if(levelManager == null)
 			levelManager = this;
@@ -18,6 +19,7 @@ public class LevelManager : MonoBehaviour {
 		DontDestroyOnLoad (gameObject);
 	}
 
+	/** Cette méthode peut etre appelé par n'importe quelle script afin de charger le niveau passé en paramètre */
 	public static void setLevelToLoad (int level, Level.LevelType levelType) {
 		levelToLoad = level;
 		levelTypeToLoad = levelType;
@@ -25,8 +27,11 @@ public class LevelManager : MonoBehaviour {
 		Application.LoadLevel(levelMaze);
 	}
 
+	/** Cette méthode est déclenché à chaque chargement de scène
+	 *  Elle vérifie que l'on se trouve bien dans la scène main.unity
+	 *  et que la variable levelToLoad a bien été passé afin de charger le niveau
+	 */
 	void OnLevelWasLoaded(int level) {
-		Debug.Log ("Variable level = " + level + " et levelToLoad" + levelToLoad);
 		if(level == levelMaze){
 			if(levelToLoad < 0){
 				Debug.LogError("Erreur levelToLoad < 0");

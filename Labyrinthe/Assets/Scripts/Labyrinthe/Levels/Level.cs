@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/** Classe permettant de définir un Level */
+
 public class Level {
 
 	public enum LevelType { Level, SavedLevel };
 
 	public int id;
 	public string name;
-	public string img;
+	//public string img;
 	public IntVector2 posBille;
 	public IntVector2 posExit;
 
@@ -28,10 +30,11 @@ public class Level {
 
 	public static char [] charSeparator = new char[]{'|'};
 
+	/** Constructeur d'un Level */
 	public Level(){
 		this.id = 0;
 		this.name = "";
-		this.img = "";
+		//this.img = "";
 		this.posBille = new IntVector2();
 		this.posExit = new IntVector2();
 		this.width = 0;
@@ -46,7 +49,8 @@ public class Level {
 		this.time = null;
 		this.stars = null;
 	}
-	
+
+	/** Méthode permettant d'afficher en console le Level */
 	public override string ToString(){
 		return "Id : " + id + " name : " + name + " posBille : " + posBille + " posExit : " + posExit + " Width x Height : " + width + " x " + height;
 	}
