@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/** Classe permettant de gérer le chargement d'un niveau */
 public class LevelManager : MonoBehaviour {
 
 	private static LevelManager levelManager = null;

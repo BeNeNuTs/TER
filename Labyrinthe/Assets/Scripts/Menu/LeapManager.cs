@@ -11,8 +11,6 @@ public class LeapManager : MonoBehaviour {
 	private Controller leap;
 	private Pointable zone;
 	private float cooldown;
-	private enum possibleStates {MAIN_MENU = 0, LEVEL_MENU = 1, EDITOR_MENU = 2};
-	private possibleStates currentState;
 
 	// Use this for initialization
 	void Start () {
@@ -22,7 +20,6 @@ public class LeapManager : MonoBehaviour {
 		leap.Config.SetFloat("Gesture.Swipe.MinVelocity", 350.0f);
 		leap.Config.Save();
 		cooldown = time;
-		currentState = possibleStates.MAIN_MENU;
 	}
 	
 	// Update is called once per frame
@@ -33,49 +30,20 @@ public class LeapManager : MonoBehaviour {
 					SwipeGesture swipe = new SwipeGesture (g);
 					// Vers la gauche
 					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
-						switch(currentState){
-							case possibleStates.MAIN_MENU:
-								mc.Play ();
-								currentState = possibleStates.LEVEL_MENU;
-								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-								break;
-							case possibleStates.EDITOR_MENU:
-								mc.BackToMenu();
-								currentState = possibleStates.MAIN_MENU;
-								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-								break;
-							default:
-								time = cooldown - 0.5f;
-								break;
-						}
+						mc.Play();
+						time = 0.0f;
 					// Vers la droite
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
-						switch(currentState){
-							case possibleStates.MAIN_MENU:
-								mc.Editor();
-								currentState = possibleStates.EDITOR_MENU;
-								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-								break;
-							case possibleStates.LEVEL_MENU:
-								mc.BackToMenu();
-								currentState = possibleStates.MAIN_MENU;
-								time = 0.0f; // Lorsque le swipe est détecté, on lance le cooldown
-								break;
-							default:
-								time = cooldown - 0.5f;
-								break;
-						}
+						mc.Editor();
+						time = 0.0f;
 					// Vers l'avant
 					} else if (Math.Abs (swipe.Direction.z) > Math.Abs (swipe.Direction.x) && Math.Abs (swipe.Direction.z) > Math.Abs (swipe.Direction.y) && swipe.Direction.z < 0.0f) {
-						switch(currentState){
-							case possibleStates.MAIN_MENU:
-								mc.Quit();
-								break;
-							default:
-								time = cooldown - 0.5f;
-								break;
-						}
+						mc.Quit ();
+					} else {
+						time = 0.0f;
 					}
+				} else if(g.Type != Gesture.GestureType.TYPE_SWIPE){
+					time = 0.0f;
 				}
 			}
 		} else {

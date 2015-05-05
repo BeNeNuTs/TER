@@ -297,6 +297,9 @@ public class EditorController : MonoBehaviour {
 		return false;
 	}
 
+	/** Permet de formater le labyrinthe en une chaine de caractère
+	 *  pour les lignes et les colonnes 
+	 */
 	private void FormatMaze() {
 		lines = "";
 		columns = "";
@@ -336,6 +339,9 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Vérifie si les positions de la bille et de la sortie
+	 *  entrée par l'utilisateur sont valide
+	 */
 	public void CheckPosField(){
 		deadEndScript.clear();
 
@@ -346,6 +352,8 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Vérifie si tout les champs entrée par l'utilisateur sont valide
+	 */
 	public void CheckAllField(){
 		if(CheckName() && CheckPosBille() && CheckPosExit() && CheckTime()){
 			saveButton.interactable = true;
@@ -354,6 +362,7 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Vérifie si le nom du labyrinthe rentrée par l'utilisateur est valide */
 	public bool CheckName(){
 		if(nameLab.text == ""){
 			ShowError("Nom incorrect.");
@@ -363,6 +372,8 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Vérifie si la position de la bille est valide et affiche
+	 *  sa position dans le labyrinthe */
 	public bool CheckPosBille(){
 		ResetDisplay(Color.green);
 
@@ -390,6 +401,8 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Vérifie si la position de la sortie est valide et affiche
+	 *  sa position dans le labyrinthe */
 	public bool CheckPosExit(){
 		ResetDisplay(Color.blue);
 
@@ -417,6 +430,7 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Permet de supprimer l'affichage de la position de la bille/sortie */
 	public void ResetDisplay(Color c){
 		if(!mazeIsGenerated)
 			return;
@@ -432,6 +446,7 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Permet de supprimer l'affichage de la position de la bille et sortie */
 	public void ResetDisplay(){
 		if(!mazeIsGenerated)
 			return;
@@ -444,6 +459,7 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Vérifie si les temps entrée par l'utilisateur sont valide */
 	public bool CheckTime(){
 		if(timeGold.text == "" || timeSilver.text == "" || timeBronze.text == ""){
 			return false;
@@ -461,16 +477,19 @@ public class EditorController : MonoBehaviour {
 		}
 	}
 
+	/** Permet de revenir au menu principal */
 	public void BackToMenu(){
 		GameController.BackToMenu();
 	}
 
+	/** Remet la rotation du labyrinthe à zéro */
 	private void ResetRotationLabyrinthe(){
 		//Remettre le labyrinthe en rotation (0,0,0)
 		plateauScript.ResetRotation();
 		maze.transform.rotation = Quaternion.Euler(0,0,0);
 	}
 
+	/** Permet d'afficher une erreur à l'utilisateur lorsqu'un champ n'est pas valide */
 	public void ShowError(string error){
 
 		Animator anim = errorText.gameObject.GetComponent<Animator>();
@@ -487,6 +506,7 @@ public class EditorController : MonoBehaviour {
 		anim.SetTrigger("fade");
 	}
 
+	/** Permet d'afficher une information à l'utilisateur */
 	public void ShowInfo(string info){
 		
 		Animator anim = errorText.gameObject.GetComponent<Animator>();

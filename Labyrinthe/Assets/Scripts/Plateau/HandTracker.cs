@@ -163,39 +163,43 @@ public class HandTracker : MonoBehaviour {
 	{
 		Hand LeftHand = hands.Leftmost;
 		Hand RightHand = hands.Rightmost;
-
+		
 		float vX = RightHand.PalmPosition.x - LeftHand.PalmPosition.x;
 		float vY = LeftHand.PalmPosition.y - RightHand.PalmPosition.y;
 		//float vZ = LeftHand.StabilizedPalmPosition.z - RightHand.StabilizedPalmPosition.z;
-
+		
 		Vector3 vBalance = new Vector3(vX , vY, 0);
 		float vAngle = Vector3.Angle(new Vector3 (1, 0, 0), vBalance);
-
-
+		
+		
 		float pitch = (LeftHand.Direction.Pitch + RightHand.Direction.Pitch)/2;
 		float pitchD = 180*pitch/Mathf.PI - 25;
-
-
+		
+		
 		Vector3 rotation;
-
+		
 		if (RightHand.PalmPosition.y > LeftHand.PalmPosition.y) 
 		{ 
-			rotation = new Vector3 (-1*pitchD*speedPitch, 0, vAngle) * speed * Time.deltaTime;
-				
+			rotation = new Vector3 (-1*pitchD*speedPitch*gameObject.transform.localScale.x, 0, vAngle*gameObject.transform.localScale.z) * speed * Time.deltaTime;
+			
 		}
 		else
 		{
-			rotation = new Vector3 (-1*pitchD*speedPitch, 0, -vAngle)  * speed * Time.deltaTime;
+			rotation = new Vector3 (-1*pitchD*speedPitch*gameObject.transform.localScale.x, 0, -vAngle*gameObject.transform.localScale.z)  * speed * Time.deltaTime;
 		}
-
+		
 		//rotation = clamp (rotation);
 		if (hands.Count < 2) {
 			//Debug.Log("NUL");
 			rotation = new Vector3 (0,0,0);
 		} 
 		
+		//rotation = clamp (rotation);
+		
 		transform.localRotation = (Quaternion.Euler (rotation));
-
+		//transform.rotation = (Quaternion.Euler (rotation));
+		//GetComponent<Rigidbody>().MoveRotation (Quaternion.Euler (rotation));
+		
 		if (hands.Leftmost.SphereRadius <= 40) {
 			if(!unZoomed){
 				unZoomed = true;
@@ -207,7 +211,7 @@ public class HandTracker : MonoBehaviour {
 				gc.ToggleView();
 			}
 		}
-
+		
 	}
 
 	// Méthode censée gérer un controle à une main, jugé peu convénient

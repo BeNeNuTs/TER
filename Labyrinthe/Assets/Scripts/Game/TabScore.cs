@@ -4,6 +4,9 @@ using UnityEngine.UI;
 using System.Xml;
 using System.IO;
 
+/** Classe permettant de gérer l'affichage du score du joueur
+ *  une fois la partie terminé
+ */
 public class TabScore : MonoBehaviour {
 
 	public Text scoreText;
