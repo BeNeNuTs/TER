@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/** Classe permettant d'animer les flèches dans les menus */
 public class AnimArrow : MonoBehaviour {
 
 	public enum Direction { X, Y }
@@ -9,9 +10,9 @@ public class AnimArrow : MonoBehaviour {
 	public float speed;
 
 	public Direction direction;
-	// Use this for initialization
-	void Start () {
 
+	/** Initialise l'animation de la flèche */
+	void Start () {
 		if(direction == Direction.X)
 			iTween.MoveTo (gameObject, iTween.Hash ("position", new Vector3 (transform.localPosition.x - magnitude, transform.localPosition.y, 0.0f), "time", speed, "islocal", true, "looptype", "pingpong", "easetype", iTween.EaseType.easeInQuart, "ignoretimescale", true));
 		else{

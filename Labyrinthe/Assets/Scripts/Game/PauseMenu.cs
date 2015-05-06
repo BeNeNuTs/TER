@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/** Classe permettant de gérer l'affichage des meilleurs scores lors
+ *  de la pause 
+ */
 public class PauseMenu : MonoBehaviour {
 
 	public Text bestScoreText;

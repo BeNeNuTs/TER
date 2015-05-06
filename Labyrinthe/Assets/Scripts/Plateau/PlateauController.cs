@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/** Classe permettant de gérer la rotation du labyrinthe au clavier (utilisé dans la scène Editeur) */
 public class PlateauController : MonoBehaviour {
 
 	public float offset;
@@ -10,6 +11,7 @@ public class PlateauController : MonoBehaviour {
 
 	private GameController gameControllerScript;
 
+	/** Initialise la classe en récupèrant le script GameController */
 	void Start(){
 		GameObject gameController = GameObject.FindGameObjectWithTag("GameController");
 
@@ -17,7 +19,7 @@ public class PlateauController : MonoBehaviour {
 			gameControllerScript = gameController.GetComponent<GameController>();
 	}
 
-	// Update is called once per frame
+	// A chaque update, récupère les entrées clavier et incline le labyrinthe en conséquence */
 	void FixedUpdate () {
 		if(gameControllerScript != null)
 			if(gameControllerScript.levelComplete)
@@ -26,19 +28,19 @@ public class PlateauController : MonoBehaviour {
 		float h = Input.GetAxisRaw ("Vertical");
 		float v = Input.GetAxisRaw ("Horizontal");
 
-		// Set the movement vector based on the axis input.
 		rotation += new Vector3 (h, 0f, -v) * speed * Time.smoothDeltaTime;
 
 		clamp ();
 
-		//rigidbody.MoveRotation(Quaternion.Euler(rotation));
 		transform.localRotation = Quaternion.Euler(rotation);
 	}
 
+	/** Remet la rotation du labyrinthe à zéro */
 	public void ResetRotation(){
 		rotation = Vector3.zero;
 	}
 
+	/** Permet de borner la rotation du labyrinthe pour qu'elle ne dépasse pas les valeurs de l'offset */
 	private void clamp() {
 		if (rotation.x > offset) {
 			rotation = new Vector3(offset, 0f, rotation.z);
