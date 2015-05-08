@@ -23,7 +23,6 @@ public class LabyrintheManager : MonoBehaviour {
 	/** Initialise le Labyrinthe courant à null */
 	void Start(){
 		currentLevel = null;
-		//GenerateLabyrinthe(2, Level.LevelType.Level);
 	}
 
 	/** Méthode static permettant de récupèrer le levels.xml */

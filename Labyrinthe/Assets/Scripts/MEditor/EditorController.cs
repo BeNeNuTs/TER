@@ -74,12 +74,15 @@ public class EditorController : MonoBehaviour {
 	}
 
 	/** Actualise la vue de la caméra en fonction de la taille du labyrinthe généré */
-	public static void SetGlobalView(int width, int height){
+	public static void SetGlobalView(int width, int height, bool tween = true){
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
 		Vector3 newPos = new Vector3(Camera.main.transform.position.x,max + max/4f,Camera.main.transform.position.z);
-		if(Camera.main.transform.position != newPos)
+		if(Camera.main.transform.position != newPos && tween){
 			iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", newPos, "time", 2f));
+		}else if(Camera.main.transform.position != newPos && !tween){
+			Camera.main.transform.position = newPos;
+		}
 	}
 
 	/** Résoud un labyrinthe avec l'algorithme de dead-end filling */
@@ -104,7 +107,9 @@ public class EditorController : MonoBehaviour {
 	/** Sauvegarde un labyrinthe dans le fichier savedLevels.xml */
 	public void Save(){
 		if(iTween.Count() > 0){
-			return;
+			int widthLab = Mathf.FloorToInt(widthSlider.value);
+			int heightLab = Mathf.FloorToInt(heightSlider.value);
+			SetGlobalView(widthLab, heightLab, false);
 		}
 
 		if(!mazeIsGenerated){

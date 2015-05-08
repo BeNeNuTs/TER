@@ -16,10 +16,11 @@ public class HandTracker : MonoBehaviour {
 	private possibleStates currentState;
 	private bool unZoomed;
 
+	float oldPitch;
 	public Vector3 rot;
 	public Vector3 rotation;
 
-	public bool HandMode = true;
+	public bool HandMode = false;
 
 	/** Initialise la classe Leap Motion */
 	void Start () {
@@ -174,11 +175,11 @@ public class HandTracker : MonoBehaviour {
 			//Debug.Log("NUL");
 			return;
 		} 
-		
+
 		Hand LeftHand = hands.Leftmost;
 		Hand RightHand = hands.Rightmost;
-		
-		
+
+
 		float vX = RightHand.PalmPosition.x - LeftHand.PalmPosition.x;
 		float vY = LeftHand.PalmPosition.y - RightHand.PalmPosition.y;
 		
@@ -188,70 +189,58 @@ public class HandTracker : MonoBehaviour {
 		
 		float pitch = LeftHand.Direction.Pitch - Mathf.PI*25/180f;
 		//float pitchD = 180*pitch/Mathf.PI;
-		
-		
-		
-		
+
+
+		if ((oldPitch > 0 && pitch>0 && oldPitch > pitch) || (oldPitch < 0 && pitch < 0 && oldPitch < pitch)) 
+		{
+			pitch = -1 * (oldPitch - pitch); 
+		}
+
 		float angleZ = 0;
-		float angleX = 0;
-		
+		//float angleX = 0;
+
 		
 		//angleZ  = (RightHand.PalmPosition.y - LeftHand.PalmPosition.y)/ Math.Abs(RightHand.PalmPosition.y - LeftHand.PalmPosition.y) ;
-		
+
 		int width = GameController.currentLevel.width;
 		int height = GameController.currentLevel.height;
-		
-		
+
 		if (RightHand.PalmPosition.y > LeftHand.PalmPosition.y) 
 		{ 
 			angleZ = 1;
-			rotation = new Vector3 (-1*pitch, 0, vAngleR )* speed * Time.deltaTime;
-			
+			rotation = new Vector3 (-1*pitch, 0, vAngleR*Math.Max(width,height)/5 )* speed * Time.deltaTime;
 		}
 		else
 		{
 			angleZ = -1;
-			rotation = new Vector3 (-1*pitch, 0, -vAngleR )  * speed * Time.deltaTime;
+			rotation = new Vector3 (-1*pitch, 0, -vAngleR*Math.Max(width,height)/5 )  * speed * Time.deltaTime;
 		}
-		
-		if (-1 * pitch * speedPitch > 0) 
+
+		/*if (-1 * pitch * speedPitch > 0) 
 		{
 			angleX = 1;
 		} 
 		else 
 		{
 			angleX = -1;
-		}
-		
-		rot += new Vector3 (angleX, 0, angleZ); //* Time.smoothDeltaTime;
+		}*/
+
+		rot += new Vector3 (-1*pitch, 0, angleZ*vAngleR); //* Time.smoothDeltaTime;
 		rot = clamp (rot);
-		
+
 		if (HandMode) 
 		{        
-			
+
 			transform.localRotation = (Quaternion.Euler (rotation));
 		} 
 		else 
 		{
 			transform.localRotation = (Quaternion.Euler (rot));
 		}
-		
-		//rotation = clamp (rotation);
-		/*if (hands.Count < 2) {
-                        //Debug.Log("NUL");
-                        rotation = new Vector3 (0,0,0);
-                } */
-		
-		//rotation = clamp (rotation);
-		
-		
-		/*if (transform.localRotation.x < Math.PI / 2) 
-                {
-                        transform.Rotate (new Vector3 (0, 0, angleZ * speed));
-                }*/
-		
-		
-		//GetComponent<Rigidbody>().MoveRotation (Quaternion.Euler (rotation));
+
+
+		oldPitch = pitch;
+
 		
 		if (hands.Leftmost.SphereRadius <= 40) {
 			if(!unZoomed){
@@ -264,8 +253,9 @@ public class HandTracker : MonoBehaviour {
 				gc.ToggleView();
 			}
 		}
-		
+			
 	}
+
 	
 
 
