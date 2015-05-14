@@ -24,7 +24,6 @@ public class LevelManager : MonoBehaviour {
 	public static void setLevelToLoad (int level, Level.LevelType levelType) {
 		levelToLoad = level;
 		levelTypeToLoad = levelType;
-		Debug.Log("LevelToLoad = " + level + " Level Type : " + levelTypeToLoad);
 		Application.LoadLevel(levelMaze);
 	}
 

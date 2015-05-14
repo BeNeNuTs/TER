@@ -139,15 +139,11 @@ public class HandTracker : MonoBehaviour {
 					// swipe vers la gauche ou vers la droite
 					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
 						// Si vers la gauche, retour au menu
-						//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-						//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						GameController.BackToMenu();
 						
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
 						// Si vers la droite, on passe au level suivant
-						//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-						//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						gc.NextLevel();
 						return;
@@ -157,8 +153,6 @@ public class HandTracker : MonoBehaviour {
 					
 				} else if(g.Type == Gesture.GestureType.TYPECIRCLE && g.State == Gesture.GestureState.STATE_STOP){
 					// Si cercle, rejouer le niveau
-					//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-					//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 					time = cooldown;
 					GameController.Replay();
 				}
@@ -172,7 +166,6 @@ public class HandTracker : MonoBehaviour {
 	private void ControlByTwoHands()
 	{
 		if (hands.Count < 2) {
-			//Debug.Log("NUL");
 			return;
 		} 
 
@@ -188,8 +181,6 @@ public class HandTracker : MonoBehaviour {
 		float vAngleR = Mathf.PI * vAngle / 180;
 		
 		float pitch = LeftHand.Direction.Pitch - Mathf.PI*25/180f;
-		//float pitchD = 180*pitch/Mathf.PI;
-
 
 		if ((oldPitch > 0 && pitch>0 && oldPitch > pitch) || (oldPitch < 0 && pitch < 0 && oldPitch < pitch)) 
 		{
@@ -197,10 +188,6 @@ public class HandTracker : MonoBehaviour {
 		}
 
 		float angleZ = 0;
-		//float angleX = 0;
-
-		
-		//angleZ  = (RightHand.PalmPosition.y - LeftHand.PalmPosition.y)/ Math.Abs(RightHand.PalmPosition.y - LeftHand.PalmPosition.y) ;
 
 		int width = GameController.currentLevel.width;
 		int height = GameController.currentLevel.height;
@@ -216,16 +203,7 @@ public class HandTracker : MonoBehaviour {
 			rotation = new Vector3 (-1*pitch, 0, -vAngleR*Math.Max(width,height)/5 )  * speed * Time.deltaTime;
 		}
 
-		/*if (-1 * pitch * speedPitch > 0) 
-		{
-			angleX = 1;
-		} 
-		else 
-		{
-			angleX = -1;
-		}*/
-
-		rot += new Vector3 (-1*pitch, 0, angleZ*vAngleR); //* Time.smoothDeltaTime;
+		rot += new Vector3 (-1*pitch, 0, angleZ*vAngleR);
 		rot = clamp (rot);
 
 		if (HandMode) 

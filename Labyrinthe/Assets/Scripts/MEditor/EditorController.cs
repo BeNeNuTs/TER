@@ -77,9 +77,10 @@ public class EditorController : MonoBehaviour {
 	public static void SetGlobalView(int width, int height, bool tween = true){
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
-		Vector3 newPos = new Vector3(Camera.main.transform.position.x,max + max/4f,Camera.main.transform.position.z);
+		Vector3 newPos = new Vector3(0,max + max/5f,0);
 		if(Camera.main.transform.position != newPos && tween){
 			iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", newPos, "time", 2f));
+			iTween.RotateTo(Camera.main.gameObject, iTween.Hash("rotation", new Vector3(90f,0f,0f), "time", 2f));
 		}else if(Camera.main.transform.position != newPos && !tween){
 			Camera.main.transform.position = newPos;
 		}
@@ -150,7 +151,6 @@ public class EditorController : MonoBehaviour {
 		XmlAttribute stars = xdoc.CreateAttribute("stars");
 		stars.Value = "";
 		xmlNewLevel.Attributes.Append(id);
-		//xmlNewLevel.Attributes.Append(img);
 		xmlNewLevel.Attributes.Append(name);
 		xmlNewLevel.Attributes.Append(score);
 		xmlNewLevel.Attributes.Append(time);

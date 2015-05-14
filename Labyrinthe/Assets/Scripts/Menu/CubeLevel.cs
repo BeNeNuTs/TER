@@ -31,9 +31,9 @@ public class CubeLevel : MonoBehaviour {
 			myTexture = Resources.Load<Texture> ("img/savedLevels/" + id) as Texture;
 		}
 
-		Debug.Log (myTexture);
+
 		Material myMaterial = gameObject.GetComponent<MeshRenderer> ().material;
-		Debug.Log (myMaterial);
+
 		
 		myMaterial.SetTexture (0, myTexture);
 	}

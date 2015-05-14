@@ -51,7 +51,6 @@ public class LevelMenuManager : MonoBehaviour {
 		
 		for (int i = 0; i<levelNodes.Count; i++) 
 		{
-			//Debug.Log (levelNodes[i].Attributes["id"].InnerText);
 			levels.Add(GameObject.Instantiate(cubeLevel) as GameObject);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().id = int.Parse(levelNodes[i].Attributes["id"].InnerText);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().type = Level.LevelType.Level;
@@ -61,7 +60,6 @@ public class LevelMenuManager : MonoBehaviour {
 			{
 				levels[levels.Count - 1].GetComponent<CubeLevel>().nbStars = int.Parse(levelNodes[i].Attributes["stars"].InnerText);
 			}
-			
 			
 			levels[levels.Count - 1].GetComponent<CubeLevel>().time.text = levelNodes[i].Attributes["time"].InnerText.ToString();
 			levels[levels.Count - 1].GetComponent<CubeLevel>().nameText.text = levelNodes[i].Attributes["name"].InnerText.ToString();
@@ -79,7 +77,6 @@ public class LevelMenuManager : MonoBehaviour {
 		
 		for (int i = 0; i<levelNodes.Count; i++) 
 		{
-			//Debug.Log (levelNodes[i].Attributes["id"].InnerText);
 			levels.Add(GameObject.Instantiate(cubeLevel) as GameObject);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().id = int.Parse(levelNodes[i].Attributes["id"].InnerText);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().type = Level.LevelType.SavedLevel;	
@@ -95,7 +92,6 @@ public class LevelMenuManager : MonoBehaviour {
 		}
 		
 		nbTotalLevels = nbLevels + nbLevelsSaved;
-		//GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(3,5,-11);
 		
 		createLevels();
 		cooldown = time;
@@ -158,7 +154,7 @@ public class LevelMenuManager : MonoBehaviour {
 			LevelManager.setLevelToLoad(levelToLoad.GetComponent<LevelLoader>().id, levelToLoad.GetComponent<LevelLoader>().type);
 		}
 
-		// Check des swipe
+		// Check des swipes
 		foreach (Gesture g in controller.Frame().Gestures()) {
 			if (g.Type == Gesture.GestureType.TYPE_SWIPE && g.State.Equals (Gesture.GestureState.STATESTOP)) { // On vérifie qu'on a un swipe terminé
 				SwipeGesture swipe = new SwipeGesture (g);
@@ -284,9 +280,6 @@ public class LevelMenuManager : MonoBehaviour {
 		{
 			levels[cptLevel].transform.RotateAround(new Vector3(0,0,0),axisRotation, angle);
 			levels[cptLevel].transform.localRotation = Quaternion.Euler(new Vector3(0,0,0));
-
-			//Allumage des étoiles
-			//levels[cptLevel].
 		}
 	
 		Vector3 vectDecalage = new Vector3(decalage+rayon, 0, 0);
@@ -300,7 +293,6 @@ public class LevelMenuManager : MonoBehaviour {
 		Hand currentHand = hands[0];
 
 		//Calcul de l'angle de rotation selon la position de la main
-		//Vector3 axisRotation = new Vector3 (0, 1, 0);
 		float angle = 0;
 
 		if (currentHand.StabilizedPalmPosition.x < -LeapFrame)
@@ -319,7 +311,6 @@ public class LevelMenuManager : MonoBehaviour {
 		{
 			nextRotation = Time.time + RotationRate;
 			iTween.RotateAdd(carousel.gameObject,iTween.Hash("y",angle,"time",RotationRate - 0.1, "space", Space.Self, "onupdate", "resetLevelRotation","onupdatetarget",this.gameObject));
-			//carousel.localRotation = Quaternion.Euler(new Vector3(0,0,0));
 
 			for(int cptLevel = 0 ; cptLevel<nbTotalLevels ; cptLevel++)
 			{
