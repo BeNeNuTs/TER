@@ -77,7 +77,7 @@ public class EditorController : MonoBehaviour {
 	public static void SetGlobalView(int width, int height, bool tween = true){
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
-		Vector3 newPos = new Vector3(0,max + max/5f,0);
+		Vector3 newPos = new Vector3(0,max + max/4f,0);
 		if(Camera.main.transform.position != newPos && tween){
 			iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", newPos, "time", 2f));
 			iTween.RotateTo(Camera.main.gameObject, iTween.Hash("rotation", new Vector3(90f,0f,0f), "time", 2f));
@@ -172,7 +172,7 @@ public class EditorController : MonoBehaviour {
 		Destroy(rt);
 		
 		byte[] bytes = screenShot.EncodeToPNG();
-		string filename = Application.dataPath + "/Resources/img/savedLevels/" + id.Value + ".png";
+		string filename = Application.dataPath + "/Documents/Save/img/" + id.Value + ".png";
 		System.IO.File.WriteAllBytes(filename, bytes);
 		//////////////
 
@@ -258,9 +258,8 @@ public class EditorController : MonoBehaviour {
 				{    
 					levelNodes[i].ParentNode.RemoveChild(levelNodes[i]);
 					xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderSave + "/savedLevels.xml");
-					File.Delete(Application.dataPath + "/Resources/img/savedLevels/" + idLevel + ".png");
-					File.Delete(Application.dataPath + "/Resources/img/savedLevels/" + idLevel + ".png.meta");
-					Debug.Log("Level id = " + idLevel + " was removed.");
+					File.Delete(Application.dataPath + "/Documents/Save/img/" + idLevel + ".png");
+					File.Delete(Application.dataPath + "/Documents/Save/img/" + idLevel + ".png.meta");
 					return;
 				}
 			}

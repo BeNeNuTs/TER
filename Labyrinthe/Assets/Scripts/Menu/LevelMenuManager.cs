@@ -125,7 +125,6 @@ public class LevelMenuManager : MonoBehaviour {
 	// Si oui, il est suppressible, sinon non
 	private bool TriggerDeletable(){
 		GameObject levelCaught = GameObject.Find("LevelTrigger");
-		Debug.Log ("appel de check deletable: " + levelCaught.GetComponent<LevelLoader> ().type.Equals (Level.LevelType.SavedLevel));
 		if (levelCaught.GetComponent<LevelLoader> ().type.Equals (Level.LevelType.SavedLevel))
 			return true;
 		return false;
@@ -179,7 +178,6 @@ public class LevelMenuManager : MonoBehaviour {
 				// Swipe vers la droite - on accepte la suppression ou on fait un retour menu
 				} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {				
 					// Si on est en pop up de suppression ou en carroussel
-					Debug.Log ("deleteConfirm: "+deleteConfirm);
 					if (deleteConfirm) {
 						time = cooldown-0.5f;
 						readyToMove = false;
@@ -255,9 +253,7 @@ public class LevelMenuManager : MonoBehaviour {
 		Vector3 CamPosition = Camera.main.gameObject.transform.position;
 		CamPosition.Normalize();
 
-		levelTrigger = GameObject.Find("LevelTrigger");
 		levelTrigger.transform.position = new Vector3(CamPosition.x * rayon,CamPosition.y * rayon, CamPosition.z * rayon);	
-
 	
 		//Disposition des levels en cercle
 		for(int i = 0; i < nbTotalLevels  ; i++)

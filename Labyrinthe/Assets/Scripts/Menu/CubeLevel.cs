@@ -24,17 +24,28 @@ public class CubeLevel : MonoBehaviour {
 
 	/** Permet d'ajouter l'image du labyrinthe sur le cube */
 	public void setImage(){
-		Texture myTexture;
 		if (type == Level.LevelType.Level) {
-			myTexture = Resources.Load<Texture> ("img/levels/" + id) as Texture;
+			Texture myTexture = Resources.Load<Texture> ("img/levels/" + id) as Texture;
+			Material myMaterial = gameObject.GetComponent<MeshRenderer> ().material;
+			myMaterial.SetTexture (0, myTexture);
 		} else {
-			myTexture = Resources.Load<Texture> ("img/savedLevels/" + id) as Texture;
+			StartCoroutine(LoadImage());
 		}
+	}
 
-
-		Material myMaterial = gameObject.GetComponent<MeshRenderer> ().material;
-
+	private IEnumerator LoadImage() {
 		
-		myMaterial.SetTexture (0, myTexture);
+		string imagePath = "file://" + Application.dataPath + "/Documents/Save/img/" + id + ".png";
+		
+		WWW www = new WWW(imagePath);
+		
+		yield return www;
+
+		if(www.texture != null){
+			Material myMaterial = gameObject.GetComponent<MeshRenderer> ().material;
+			myMaterial.SetTexture (0, www.texture);
+		}else{
+			Debug.LogError("Impossible de charger la texture du cube : " + id);
+		}
 	}
 }
