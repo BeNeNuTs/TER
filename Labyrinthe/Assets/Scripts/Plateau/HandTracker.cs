@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using Leap;
 
+/** Classe permettant de gérer les interactions Leap Motion durant la partie */
 public class HandTracker : MonoBehaviour {
 
 	public GameController gc;
@@ -15,7 +16,13 @@ public class HandTracker : MonoBehaviour {
 	private possibleStates currentState;
 	private bool unZoomed;
 
-	// Use this for initialization
+	float oldPitch;
+	public Vector3 rot;
+	public Vector3 rotation;
+
+	public bool HandMode = false;
+
+	/** Initialise la classe Leap Motion */
 	void Start () {
 		controller = new Controller ();
 		currentState = possibleStates.WAITING;
@@ -26,9 +33,12 @@ public class HandTracker : MonoBehaviour {
 		cooldown = time;
 		time -= 0.5f;
 		unZoomed = false;
+		speed = 1000;
+		offset = 15;
+		rot = new Vector3 (0, 0, 0);
 	}
 
-	// Update is called once per frame
+	/** Détecte les gestes de l'utilisateur */
 	void Update () {
 		// Si on a fini le jeu on lance le menu de fin
 		if (currentState != possibleStates.LEVEL_COMPLETE && gc.levelComplete) {
@@ -129,15 +139,11 @@ public class HandTracker : MonoBehaviour {
 					// swipe vers la gauche ou vers la droite
 					if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x < 0.0f){
 						// Si vers la gauche, retour au menu
-						//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-						//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						GameController.BackToMenu();
 						
 					} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {
 						// Si vers la droite, on passe au level suivant
-						//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-						//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 						time = cooldown;
 						gc.NextLevel();
 						return;
@@ -147,8 +153,6 @@ public class HandTracker : MonoBehaviour {
 					
 				} else if(g.Type == Gesture.GestureType.TYPECIRCLE && g.State == Gesture.GestureState.STATE_STOP){
 					// Si cercle, rejouer le niveau
-					//controller.EnableGesture(Gesture.GestureType.TYPECIRCLE, false);
-					//controller.EnableGesture(Gesture.GestureType.TYPESWIPE, false);
 					time = cooldown;
 					GameController.Replay();
 				}
@@ -161,44 +165,60 @@ public class HandTracker : MonoBehaviour {
 	// Méthode qui gère le plateau lors du jeu
 	private void ControlByTwoHands()
 	{
+		if (hands.Count < 2) {
+			return;
+		} 
+
 		Hand LeftHand = hands.Leftmost;
 		Hand RightHand = hands.Rightmost;
-		
+
+
 		float vX = RightHand.PalmPosition.x - LeftHand.PalmPosition.x;
 		float vY = LeftHand.PalmPosition.y - RightHand.PalmPosition.y;
-		//float vZ = LeftHand.StabilizedPalmPosition.z - RightHand.StabilizedPalmPosition.z;
 		
 		Vector3 vBalance = new Vector3(vX , vY, 0);
 		float vAngle = Vector3.Angle(new Vector3 (1, 0, 0), vBalance);
+		float vAngleR = Mathf.PI * vAngle / 180;
 		
-		
-		float pitch = (LeftHand.Direction.Pitch + RightHand.Direction.Pitch)/2;
-		float pitchD = 180*pitch/Mathf.PI - 25;
-		
-		
-		Vector3 rotation;
-		
+		float pitch = LeftHand.Direction.Pitch - Mathf.PI*25/180f;
+
+		if ((oldPitch > 0 && pitch>0 && oldPitch > pitch) || (oldPitch < 0 && pitch < 0 && oldPitch < pitch)) 
+		{
+			pitch = -1 * (oldPitch - pitch); 
+		}
+
+		float angleZ = 0;
+
+		int width = GameController.currentLevel.width;
+		int height = GameController.currentLevel.height;
+
 		if (RightHand.PalmPosition.y > LeftHand.PalmPosition.y) 
 		{ 
-			rotation = new Vector3 (-1*pitchD*speedPitch*gameObject.transform.localScale.x, 0, vAngle*gameObject.transform.localScale.z) * speed * Time.deltaTime;
-			
+			angleZ = 1;
+			rotation = new Vector3 (-1*pitch, 0, vAngleR*Math.Max(width,height)/5 )* speed * Time.deltaTime;
 		}
 		else
 		{
-			rotation = new Vector3 (-1*pitchD*speedPitch*gameObject.transform.localScale.x, 0, -vAngle*gameObject.transform.localScale.z)  * speed * Time.deltaTime;
+			angleZ = -1;
+			rotation = new Vector3 (-1*pitch, 0, -vAngleR*Math.Max(width,height)/5 )  * speed * Time.deltaTime;
 		}
-		
-		//rotation = clamp (rotation);
-		if (hands.Count < 2) {
-			//Debug.Log("NUL");
-			rotation = new Vector3 (0,0,0);
+
+		rot += new Vector3 (-1*pitch, 0, angleZ*vAngleR);
+		rot = clamp (rot);
+
+		if (HandMode) 
+		{        
+
+			transform.localRotation = (Quaternion.Euler (rotation));
 		} 
-		
-		//rotation = clamp (rotation);
-		
-		transform.localRotation = (Quaternion.Euler (rotation));
-		//transform.rotation = (Quaternion.Euler (rotation));
-		//GetComponent<Rigidbody>().MoveRotation (Quaternion.Euler (rotation));
+		else 
+		{
+			transform.localRotation = (Quaternion.Euler (rot));
+		}
+
+
+		oldPitch = pitch;
+
 		
 		if (hands.Leftmost.SphereRadius <= 40) {
 			if(!unZoomed){
@@ -211,35 +231,11 @@ public class HandTracker : MonoBehaviour {
 				gc.ToggleView();
 			}
 		}
-		
+			
 	}
 
-	// Méthode censée gérer un controle à une main, jugé peu convénient
-	/*private void ControlByOneHand()
-	{
-		Hand firstHand = hands[0];
-		
-		float pitch = firstHand.Direction.Pitch;
-		float yaw = firstHand.Direction.Yaw;
-		float roll = firstHand.PalmNormal.Roll;
-		
-		float pitchD = 180*pitch/3.14f;
-		float rollD = 180*roll/3.14f;
-		float yawD = 0;//180*yaw/3.14f;
-		
-		Debug.Log ("Pitch" + pitch);
-		Debug.Log ("Yaw" + yaw);
-		Debug.Log ("Roll" + roll);
-		
-		Vector3 rotation = new Vector3 (-1*pitchD*speedPitch, yawD, rollD*speedRoll)  * speed * Time.deltaTime;
+	
 
-		if (!firstHand.IsValid) {
-			Debug.Log("NUL");
-			rotation = new Vector3 (0,0,0);
-		} 
-		
-		GetComponent<Rigidbody>().MoveRotation (Quaternion.Euler (rotation));
-	}*/
 
 
 	// Fonction qui retourne la rotation du labyrinthe
@@ -259,6 +255,9 @@ public class HandTracker : MonoBehaviour {
 
 		return rotation;
 	}
+
+
+
 	
 
 }

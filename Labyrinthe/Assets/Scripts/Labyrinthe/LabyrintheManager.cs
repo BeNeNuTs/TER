@@ -23,7 +23,6 @@ public class LabyrintheManager : MonoBehaviour {
 	/** Initialise le Labyrinthe courant à null */
 	void Start(){
 		currentLevel = null;
-		//GenerateLabyrinthe(1);
 	}
 
 	/** Méthode static permettant de récupèrer le levels.xml */
@@ -140,6 +139,7 @@ public class LabyrintheManager : MonoBehaviour {
 
 	/** Permet de générer le Labyrinthe en fonction d'un id */
 	public void GenerateLabyrinthe(int level, Level.LevelType levelType){
+
 		if(levelType == Level.LevelType.Level)
 			currentLevel = LoadLevel(LabyrintheManager.GetLevelXML(), level);
 		else
@@ -172,8 +172,6 @@ public class LabyrintheManager : MonoBehaviour {
 		exit = Instantiate(exit) as GameObject;
 		exit.transform.position = new Vector3(maze.GetCell(currentLevel.posExit).transform.position.x, 0f, maze.GetCell(currentLevel.posExit).transform.position.z);
 		exit.transform.parent = maze.transform;
-
-		scale ();
 	}
 
 	/** Vérifie si le dossier /Documents existe bien, sinon la fonction le crée */
@@ -196,17 +194,6 @@ public class LabyrintheManager : MonoBehaviour {
 		get {
 			return currentLevel.id;
 		}
-	}
-
-	public void scale()
-	{
-		float xScale = 5 / (float) maze.size.x;
-		float yScale = 5 / (float)maze.size.z;
-		float scale = 1;
-		
-		scale = Mathf.Max(xScale,yScale);
-		
-		maze.gameObject.transform.localScale = new Vector3 (scale, scale, scale);
 	}
 
 

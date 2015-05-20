@@ -6,7 +6,7 @@ using System.IO;
 using System;
 using Leap;
 
-
+/** Classe permettant de gérer le carrousel avec le Leap Motion */
 public class LevelMenuManager : MonoBehaviour {
 
 	Controller controller;
@@ -28,7 +28,7 @@ public class LevelMenuManager : MonoBehaviour {
 	private bool deleteConfirm = false;
 	public static int decalage = 100;
 
-	// Use this for initialization
+	/** Initialise la classe en chargant et créant les différents niveaux dans le carrousel */
 	void Start () {
 		controller = new Controller ();
 		controller.EnableGesture (Gesture.GestureType.TYPE_SWIPE);
@@ -51,7 +51,6 @@ public class LevelMenuManager : MonoBehaviour {
 		
 		for (int i = 0; i<levelNodes.Count; i++) 
 		{
-			//Debug.Log (levelNodes[i].Attributes["id"].InnerText);
 			levels.Add(GameObject.Instantiate(cubeLevel) as GameObject);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().id = int.Parse(levelNodes[i].Attributes["id"].InnerText);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().type = Level.LevelType.Level;
@@ -61,7 +60,6 @@ public class LevelMenuManager : MonoBehaviour {
 			{
 				levels[levels.Count - 1].GetComponent<CubeLevel>().nbStars = int.Parse(levelNodes[i].Attributes["stars"].InnerText);
 			}
-			
 			
 			levels[levels.Count - 1].GetComponent<CubeLevel>().time.text = levelNodes[i].Attributes["time"].InnerText.ToString();
 			levels[levels.Count - 1].GetComponent<CubeLevel>().nameText.text = levelNodes[i].Attributes["name"].InnerText.ToString();
@@ -79,7 +77,6 @@ public class LevelMenuManager : MonoBehaviour {
 		
 		for (int i = 0; i<levelNodes.Count; i++) 
 		{
-			//Debug.Log (levelNodes[i].Attributes["id"].InnerText);
 			levels.Add(GameObject.Instantiate(cubeLevel) as GameObject);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().id = int.Parse(levelNodes[i].Attributes["id"].InnerText);
 			levels[levels.Count - 1].GetComponent<CubeLevel>().type = Level.LevelType.SavedLevel;	
@@ -94,17 +91,13 @@ public class LevelMenuManager : MonoBehaviour {
 			levels[levels.Count - 1].GetComponent<CubeLevel>().nameText.text = levelNodes[i].Attributes["name"].InnerText.ToString();
 		}
 		
-		//Debug.Log (nbLevels);
-		//Debug.Log (nbLevelsSaved);
-		
 		nbTotalLevels = nbLevels + nbLevelsSaved;
-		//GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(3,5,-11);
 		
 		createLevels();
 		cooldown = time;
 	}
 
-	// Update is called once per frame
+	/** Permet de gérer les différents gestes effectué avec le Leap Motion */
 	void Update () 
 	{
 		hands = controller.Frame ().Hands;
@@ -132,7 +125,6 @@ public class LevelMenuManager : MonoBehaviour {
 	// Si oui, il est suppressible, sinon non
 	private bool TriggerDeletable(){
 		GameObject levelCaught = GameObject.Find("LevelTrigger");
-		Debug.Log ("appel de check deletable: " + levelCaught.GetComponent<LevelLoader> ().type.Equals (Level.LevelType.SavedLevel));
 		if (levelCaught.GetComponent<LevelLoader> ().type.Equals (Level.LevelType.SavedLevel))
 			return true;
 		return false;
@@ -161,7 +153,7 @@ public class LevelMenuManager : MonoBehaviour {
 			LevelManager.setLevelToLoad(levelToLoad.GetComponent<LevelLoader>().id, levelToLoad.GetComponent<LevelLoader>().type);
 		}
 
-		// Check des swipe
+		// Check des swipes
 		foreach (Gesture g in controller.Frame().Gestures()) {
 			if (g.Type == Gesture.GestureType.TYPE_SWIPE && g.State.Equals (Gesture.GestureState.STATESTOP)) { // On vérifie qu'on a un swipe terminé
 				SwipeGesture swipe = new SwipeGesture (g);
@@ -186,7 +178,6 @@ public class LevelMenuManager : MonoBehaviour {
 				// Swipe vers la droite - on accepte la suppression ou on fait un retour menu
 				} else if (Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.y) && Math.Abs (swipe.Direction.x) > Math.Abs (swipe.Direction.z) && swipe.Direction.x > 0.0f) {				
 					// Si on est en pop up de suppression ou en carroussel
-					Debug.Log ("deleteConfirm: "+deleteConfirm);
 					if (deleteConfirm) {
 						time = cooldown-0.5f;
 						readyToMove = false;
@@ -216,9 +207,8 @@ public class LevelMenuManager : MonoBehaviour {
 		Vector3 CamPosition = Camera.main.gameObject.transform.position;
 		CamPosition.Normalize ();
 
-		//TODO décommenter
 		//Suppression du level dans xml
-		//EditorController.RemoveLevel (levels[id].GetComponent<CubeLevel>().id);
+		EditorController.RemoveLevel (levels[id].GetComponent<CubeLevel>().id);
 
 		// On retire le cube de la liste, on décrémente le nombre de level et on met l'ID à jour
 		levels.Remove (levelTrigger.GetComponent<LevelLoader> ().cube);
@@ -263,9 +253,7 @@ public class LevelMenuManager : MonoBehaviour {
 		Vector3 CamPosition = Camera.main.gameObject.transform.position;
 		CamPosition.Normalize();
 
-		levelTrigger = GameObject.Find("LevelTrigger");
 		levelTrigger.transform.position = new Vector3(CamPosition.x * rayon,CamPosition.y * rayon, CamPosition.z * rayon);	
-
 	
 		//Disposition des levels en cercle
 		for(int i = 0; i < nbTotalLevels  ; i++)
@@ -288,9 +276,6 @@ public class LevelMenuManager : MonoBehaviour {
 		{
 			levels[cptLevel].transform.RotateAround(new Vector3(0,0,0),axisRotation, angle);
 			levels[cptLevel].transform.localRotation = Quaternion.Euler(new Vector3(0,0,0));
-
-			//Allumage des étoiles
-			//levels[cptLevel].
 		}
 	
 		Vector3 vectDecalage = new Vector3(decalage+rayon, 0, 0);
@@ -298,12 +283,12 @@ public class LevelMenuManager : MonoBehaviour {
 		levelTrigger.transform.position += vectDecalage;
 	}
 
+	/** Permet d'appliquer une rotation au carrousel en fonction du geste effectué */
 	void moveCarousel()
 	{
 		Hand currentHand = hands[0];
 
 		//Calcul de l'angle de rotation selon la position de la main
-		//Vector3 axisRotation = new Vector3 (0, 1, 0);
 		float angle = 0;
 
 		if (currentHand.StabilizedPalmPosition.x < -LeapFrame)
@@ -322,7 +307,6 @@ public class LevelMenuManager : MonoBehaviour {
 		{
 			nextRotation = Time.time + RotationRate;
 			iTween.RotateAdd(carousel.gameObject,iTween.Hash("y",angle,"time",RotationRate - 0.1, "space", Space.Self, "onupdate", "resetLevelRotation","onupdatetarget",this.gameObject));
-			//carousel.localRotation = Quaternion.Euler(new Vector3(0,0,0));
 
 			for(int cptLevel = 0 ; cptLevel<nbTotalLevels ; cptLevel++)
 			{
@@ -332,6 +316,7 @@ public class LevelMenuManager : MonoBehaviour {
 
 	}
 	
+	/** Remet la rotation locale des niveaux à zéro */
 	void resetLevelRotation()
 	{
 		for(int cptLevel = 0 ; cptLevel<nbTotalLevels ; cptLevel++)

@@ -74,12 +74,16 @@ public class EditorController : MonoBehaviour {
 	}
 
 	/** Actualise la vue de la caméra en fonction de la taille du labyrinthe généré */
-	public static void SetGlobalView(int width, int height){
+	public static void SetGlobalView(int width, int height, bool tween = true){
 		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
 		int max = Mathf.Max(width, height);
-		Vector3 newPos = new Vector3(Camera.main.transform.position.x,max + max/4f,Camera.main.transform.position.z);
-		if(Camera.main.transform.position != newPos)
+		Vector3 newPos = new Vector3(0,max + max/4f,0);
+		if(Camera.main.transform.position != newPos && tween){
 			iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", newPos, "time", 2f));
+			iTween.RotateTo(Camera.main.gameObject, iTween.Hash("rotation", new Vector3(90f,0f,0f), "time", 2f));
+		}else if(Camera.main.transform.position != newPos && !tween){
+			Camera.main.transform.position = newPos;
+		}
 	}
 
 	/** Résoud un labyrinthe avec l'algorithme de dead-end filling */
@@ -104,7 +108,13 @@ public class EditorController : MonoBehaviour {
 	/** Sauvegarde un labyrinthe dans le fichier savedLevels.xml */
 	public void Save(){
 		if(iTween.Count() > 0){
-			return;
+			int widthLab = Mathf.FloorToInt(widthSlider.value);
+			int heightLab = Mathf.FloorToInt(heightSlider.value);
+			SetGlobalView(widthLab, heightLab, false);
+		}
+
+		if(!mazeIsGenerated){
+			Generate();
 		}
 
 		FormatMaze();
@@ -132,8 +142,6 @@ public class EditorController : MonoBehaviour {
 		XmlNode xmlNewLevel = xdoc.CreateNode(XmlNodeType.Element, "level", null);
 		XmlAttribute id = xdoc.CreateAttribute("id");
 		id.Value = savedLevel.ChildNodes.Count.ToString();
-		/*XmlAttribute img = xdoc.CreateAttribute("img");
-		img.Value = "img/" + id.Value;*/
 		XmlAttribute name = xdoc.CreateAttribute("name");
 		name.Value = nameLab.text;
 		XmlAttribute score = xdoc.CreateAttribute("score");
@@ -143,7 +151,6 @@ public class EditorController : MonoBehaviour {
 		XmlAttribute stars = xdoc.CreateAttribute("stars");
 		stars.Value = "";
 		xmlNewLevel.Attributes.Append(id);
-		//xmlNewLevel.Attributes.Append(img);
 		xmlNewLevel.Attributes.Append(name);
 		xmlNewLevel.Attributes.Append(score);
 		xmlNewLevel.Attributes.Append(time);
@@ -165,7 +172,7 @@ public class EditorController : MonoBehaviour {
 		Destroy(rt);
 		
 		byte[] bytes = screenShot.EncodeToPNG();
-		string filename = Application.dataPath + "/Resources/img/savedLevels/" + id.Value + ".png";
+		string filename = Application.dataPath + "/Documents/Save/img/" + id.Value + ".png";
 		System.IO.File.WriteAllBytes(filename, bytes);
 		//////////////
 
@@ -251,7 +258,8 @@ public class EditorController : MonoBehaviour {
 				{    
 					levelNodes[i].ParentNode.RemoveChild(levelNodes[i]);
 					xdoc.Save(Application.dataPath + LabyrintheManager.folderDocs + LabyrintheManager.folderSave + "/savedLevels.xml");
-					Debug.Log("Level id = " + idLevel + " was removed.");
+					File.Delete(Application.dataPath + "/Documents/Save/img/" + idLevel + ".png");
+					File.Delete(Application.dataPath + "/Documents/Save/img/" + idLevel + ".png.meta");
 					return;
 				}
 			}

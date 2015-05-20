@@ -135,11 +135,9 @@ public class GameController : MonoBehaviour {
 
 			if(currentLevel.levelType == Level.LevelType.Level){
 				myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
-				levelType = Level.LevelType.SavedLevel;
 			}
 			else{
 				myXmlTextReader = LabyrintheManager.GetLevelXML();
-				levelType = Level.LevelType.Level;
 			}
 
 			xdoc = new XmlDocument();
@@ -147,12 +145,16 @@ public class GameController : MonoBehaviour {
 			myXmlTextReader.Close();
 			
 			levelNodes = xdoc.GetElementsByTagName("level");
-			if(levelNodes.Count > 0)
+			if(levelNodes.Count > 0){
 				nextLevel = int.Parse(levelNodes[0].Attributes["id"].InnerText);
+				if(levelType == Level.LevelType.Level)
+					levelType = Level.LevelType.SavedLevel;
+				else
+					levelType = Level.LevelType.Level;
+			}
 		}
 
 		if(nextLevel >= 0){
-			Debug.Log ("Niveau trouvé: " + nextLevel);
 			LevelManager.setLevelToLoad(nextLevel, levelType);
 		}else{
 			Debug.LogError ("Erreur nextLevel < 0");
@@ -203,15 +205,7 @@ public class GameController : MonoBehaviour {
 		EditorController.SetGlobalView(currentLevel.width, currentLevel.height);
 	}
 
-	void GlobalView(int width, int height)
-	{
-		//Déplacer la caméra au bon endroit afin de voir le labyrinthe généré
-		int max = Mathf.Max(width/5, height/5);
-		Vector3 newPos = new Vector3(Camera.main.transform.position.x,max,Camera.main.transform.position.z);
-		
-		if(Camera.main.transform.position != newPos)
-			iTween.MoveTo(Camera.main.gameObject, iTween.Hash("position", newPos, "time", 2f));
-	}
+
 	
 	/** Change la vue de la caméra en Local View */
 	private void SetLocalView(){
@@ -220,9 +214,9 @@ public class GameController : MonoBehaviour {
 		}
 		
 		inGlobalView = false;
-		
+
+		iTween.RotateTo(Camera.main.gameObject, iTween.Hash("rotation", new Vector3(60f,0f,0f), "time", 1f));
 		CameraFollow cameraFollowScript = Camera.main.GetComponent<CameraFollow>();
-		//cameraFollowScript.offset = new Vector3(0,0, currentLevel.height/5);
 		if(cameraFollowScript != null){
 			cameraFollowScript.enabled = true;
 		}

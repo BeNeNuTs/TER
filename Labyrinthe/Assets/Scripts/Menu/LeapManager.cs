@@ -3,6 +3,7 @@ using System.Collections;
 using Leap;
 using System;
 
+/** Classe gérant les intéractions Leap Motion dans le menu principal */
 public class LeapManager : MonoBehaviour {
 
 	public MenuController mc;	// Permet de naviguer entre les menus
@@ -12,7 +13,7 @@ public class LeapManager : MonoBehaviour {
 	private Pointable zone;
 	private float cooldown;
 
-	// Use this for initialization
+	/** Initialise la classe du Leap Motion */
 	void Start () {
 		leap = new Controller ();
 		leap.EnableGesture (Gesture.GestureType.TYPE_SWIPE);
@@ -22,7 +23,7 @@ public class LeapManager : MonoBehaviour {
 		cooldown = time;
 	}
 	
-	// Update is called once per frame
+	/** Permet de détecter les gestes de l'utilisateur dans le menu */
 	void Update () {
 		if (time >= cooldown) {
 			foreach (Gesture g in leap.Frame().Gestures()) {
