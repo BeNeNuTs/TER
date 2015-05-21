@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Xml;
+using System.IO;
 
+/** La classe GameController contient les fonctions qui permettent de gérer la partie en cours */
 public class GameController : MonoBehaviour {
 
-	public string levelName;
+	public static Level currentLevel;
 
 	public Text levelText;
 	public Text timeText;
@@ -12,30 +15,42 @@ public class GameController : MonoBehaviour {
 	public GameObject tabScore;
 	public GameObject pauseMenu;
 
-	private bool levelComplete = false;
+	[HideInInspector]
+	public bool levelComplete = false;
+	[HideInInspector]
+	public bool handsChecker = false;
+
 	private bool inPause = false;
+	private bool inGlobalView = false;
 
 	private float playerTime;
-	private int playerDie = 0;
 
+	/** Initialise le nom de Labyrinthe courant */
 	void Start() {
-		levelText.text += levelName;
-		ResetDie ();
+		levelText.text += currentLevel.name;;
 	}
 
-	// Update is called once per frame
+	/** Détecte si le joueur met le jeu en pause ou change la vue de la caméra */
 	void Update () {
 
 		if (Input.GetButtonDown("Cancel")) {
 			TogglePauseMenu();
+		}else if (Input.GetButtonDown("Submit")) {
+			ToggleView();
 		}
 
-		if (!levelComplete) {
-			timeText.text = "Time : " + RoundValue (Time.timeSinceLevelLoad, 100f);
+		if (!levelComplete && handsChecker) {
+			playerTime += Time.deltaTime;
+			playerTime = RoundValue (playerTime, 100f);
+			timeText.text = "Temps : " + playerTime;
 		}
 	}
 
-	private void TogglePauseMenu(){
+	/** Active ou désactive la pause */
+	public void TogglePauseMenu(){
+		if(levelComplete)
+			return;
+
 		if (inPause) {
 			inPause = false;
 			Time.timeScale = 1f;
@@ -47,7 +62,15 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public void QuitTheGame(){
+	/** Méthode permettant de quitter le jeu
+	 *  A utiliser avec les boutons (car on ne peut pas utiliser les méthodes static)
+	 */
+	public void Quit(){
+		GameController.QuitTheGame();
+	}
+
+	/** Méthode static permettant de quitter le jeu */
+	public static void QuitTheGame(){
 		if(Application.isEditor){
 			Debug.Break();
 		}else{
@@ -55,34 +78,151 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public void NextLevel(){
-		//TODO
-		print ("Next Level");
+	/** Méthode permettant de recommencer un niveau
+	 *  A utiliser avec les boutons (car on ne peut pas utiliser les méthodes static)
+	 */
+	public void ReplayB(){
+		GameController.Replay();
 	}
-	
+
+	/** Méthode static permettant de recommencer un niveau */
+	public static void Replay(){
+		Time.timeScale = 1f;
+		LevelManager.setLevelToLoad(currentLevel.id, currentLevel.levelType); 
+	}
+
+	/** Dans la scène du menu, permet de retourner au menu principal 
+	 *	(Jouer, Editeur, Quitter)
+	 */
+	public void Back(){
+		GameController.BackToMenu();
+	}
+
+	/** Méthode static qui permet dans la scène du menu, de retourner au menu principal 
+	 *	(Jouer, Editeur, Quitter)
+	 */
+	public static void BackToMenu(){
+		Time.timeScale = 1f;
+		Application.LoadLevel("menu");
+	}
+
+	/** Recherche le niveau suivant par rapport au niveau actuel et charge la scène */
+	public void NextLevel(){
+		XmlTextReader myXmlTextReader;
+		if(currentLevel.levelType == Level.LevelType.Level)
+			myXmlTextReader = LabyrintheManager.GetLevelXML();
+		else
+			myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
+		
+		XmlDocument xdoc = new XmlDocument();
+		xdoc.Load(myXmlTextReader);
+		
+		myXmlTextReader.Close();
+		
+		XmlNodeList levelNodes = xdoc.GetElementsByTagName("level");
+		int nextLevel = -1;
+		Level.LevelType levelType = currentLevel.levelType;
+		for (int i = 0; i < levelNodes.Count - 1; i++)
+		{
+			if(levelNodes[i].Attributes["id"].InnerText == currentLevel.id.ToString()){
+				nextLevel = int.Parse(levelNodes[i+1].Attributes["id"].InnerText);
+				break;
+			}
+		}
+
+		if(nextLevel == -1){
+			nextLevel = int.Parse(levelNodes[0].Attributes["id"].InnerText);
+
+			if(currentLevel.levelType == Level.LevelType.Level){
+				myXmlTextReader = LabyrintheManager.GetSavedLevelXML();
+			}
+			else{
+				myXmlTextReader = LabyrintheManager.GetLevelXML();
+			}
+
+			xdoc = new XmlDocument();
+			xdoc.Load(myXmlTextReader);
+			myXmlTextReader.Close();
+			
+			levelNodes = xdoc.GetElementsByTagName("level");
+			if(levelNodes.Count > 0){
+				nextLevel = int.Parse(levelNodes[0].Attributes["id"].InnerText);
+				if(levelType == Level.LevelType.Level)
+					levelType = Level.LevelType.SavedLevel;
+				else
+					levelType = Level.LevelType.Level;
+			}
+		}
+
+		if(nextLevel >= 0){
+			LevelManager.setLevelToLoad(nextLevel, levelType);
+		}else{
+			Debug.LogError ("Erreur nextLevel < 0");
+		}
+	}
+
+	/** Retire le menu pause et continue la partie */
 	public void Continue(){
 		TogglePauseMenu();
 	}
 
+	/** Affiche les scores en fin de partie */
 	public void ShowScore() {
-		tabScore.GetComponent<TabScore> ().GenerateScore (playerTime, 0f);
 		tabScore.SetActive (true);
+		tabScore.GetComponent<TabScore> ().GenerateScore (currentLevel, playerTime);
 	}
 
+	/** Permet de spécifier que le niveau est terminé ( le joueur a gagné )
+	 * 	Cette méthode est appelé par la classe ExitController
+	 */
 	public void LevelComplete(){
 		levelComplete = true;
-		playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
-		timeText.text = "Time : " + playerTime;
+		//playerTime = RoundValue (Time.timeSinceLevelLoad, 100f);
+		timeText.text = "Temps : " + playerTime;
 	}
 
-	public void IncreaseDie(){
-		playerDie++;
+	/** Change la vue de la caméra Local/Global */
+	public void ToggleView(){
+		if(inGlobalView){
+			SetLocalView();
+		}else{
+			SetGlobalView();
+		}
 	}
 
-	public void ResetDie(){
-		playerDie = 0;
+	/** Change la vue de la caméra en Global View */
+	private void SetGlobalView(){
+		if(iTween.Count(Camera.main.gameObject) > 0){
+			iTween.Stop(Camera.main.gameObject);
+		}
+
+		inGlobalView = true;
+
+		CameraFollow cameraFollowScript = Camera.main.GetComponent<CameraFollow>();
+		if(cameraFollowScript != null){
+			cameraFollowScript.enabled = false;
+		}
+		EditorController.SetGlobalView(currentLevel.width, currentLevel.height);
 	}
 
+
+	
+	/** Change la vue de la caméra en Local View */
+	private void SetLocalView(){
+		if(iTween.Count(Camera.main.gameObject) > 0){
+			iTween.Stop(Camera.main.gameObject);
+		}
+		
+		inGlobalView = false;
+
+		iTween.RotateTo(Camera.main.gameObject, iTween.Hash("rotation", new Vector3(60f,0f,0f), "time", 1f));
+		CameraFollow cameraFollowScript = Camera.main.GetComponent<CameraFollow>();
+		if(cameraFollowScript != null){
+			cameraFollowScript.enabled = true;
+		}
+	}
+
+	/** Arrondi un float avec <precision> chiffre après la virgule */
 	public static float RoundValue(float num, float precision)
 	{
 		return Mathf.Floor(num * precision + 0.5f) / precision;

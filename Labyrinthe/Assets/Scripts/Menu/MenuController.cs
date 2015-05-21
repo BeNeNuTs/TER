@@ -4,115 +4,81 @@ using System.Xml;
 using System.IO;
 using System;
 
+/** Classe permettant de gérer les différentes actions dans le menu */
 public class MenuController : MonoBehaviour {
 
 	public GameObject menu;
 	public GameObject levels;
-	public GameObject options;
+	public GameObject carousel;
+	public LeapManager scriptMenu;
 
-	public GameObject [] tabIcon;
+	public LevelMenuManager levelMenuManager;
 
-	public float timeTransition = 2f;
+	public float timeTransition = 1f;
 
-	public struct IconStruct
-	{
-		public int id;
-		public Sprite img;
-		public string name;
-	};
-
+	/** Initialise les positions des différents menus */
 	void Awake(){
-		Debug.Log("Screen : width = " + Screen.width + " height = " + Screen.height);
 
 		//Désactiver la vue des levels et la mettre à droite
 		levels.SetActive(false);
-		levels.transform.position = new Vector3(Screen.width * 2,Mathf.Floor(Screen.height/2),0);
-
-		//Désactiver la vue des options et la mettre à gauche
-		options.SetActive(false);
-		options.transform.position = new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0);
-
-
-		//Load level icons
-		CreateAllLevelIcons(LabyrintheManager.GetLevelXML());
+		levels.transform.localPosition = new Vector3(Screen.width*2,0,0);
+		scriptMenu.enabled = true;
+		levelMenuManager.enabled = true;
 	}
 
-	public void CreateAllLevelIcons(XmlTextReader myXmlTextReader){
-		ArrayList levelsIcon = new ArrayList();
-		
-		while (myXmlTextReader.Read())
-		{
-			if(myXmlTextReader.IsStartElement()){
-				if (myXmlTextReader.Name == "level")
-				{
-					//Level id //////////////////////////////////////
-					IconStruct icon;
-					icon.id = int.Parse(myXmlTextReader.GetAttribute("id"));
-					string imgPath = myXmlTextReader.GetAttribute("img");
-					icon.name = myXmlTextReader.GetAttribute("name");
-
-					icon.img = Resources.Load<Sprite>(imgPath) as Sprite;
-
-					levelsIcon.Add(icon);
-				}
-			}
-		}
-		
-		myXmlTextReader.Close();
-
-		for(int i = 0 ; i < levelsIcon.Count ; i++)	
-			Debug.Log(levelsIcon[i]);
-
-		if(levelsIcon.Count != tabIcon.Length){
-			Debug.LogError("Nombre de levels != du nombre d'icon dans le menu : nbLevel : " + levelsIcon.Count + " nbIcon : " + tabIcon.Length);
-			return;
-		}
-
-		/*for(int i = 0 ; i < tabIcon.Length ; i++){
-			tabIcon[i].GetComponent<Icon>().id = levelsIcon[i];
-		}*/
-	}
-
-
+	/** Décale les menus pour afficher le menus jouer avec le carrousel */
 	public void Play(){
-		Debug.Log("Play");
-
 		//Mettre le menu a droite
 		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(-Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
 
 		levels.SetActive(true);
 		//Mettre les levels au milieu
 		iTween.MoveTo(levels, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		iTween.MoveTo(carousel, iTween.Hash("position", Vector3.zero, "time", timeTransition, "easetype", iTween.EaseType.easeInBack, "oncomplete", "ToggleCarousel", "oncompletetarget", this.gameObject));
+
+		levelMenuManager.levelTrigger.transform.position -= new Vector3(LevelMenuManager.decalage+levelMenuManager.nbTotalLevels,0,0);
+		scriptMenu.enabled = false;
+		levelMenuManager.enabled = true;
 	}
 
-	public void Options(){
-		Debug.Log("Show Options");
-
+	/** Décale les menus pour afficher la scène de l'éditeur */
+	public void Editor(){
 		//Mettre le menu a gauche
 		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width * 2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
-		
-		options.SetActive(true);
-		//Mettre les options au milieu
-		iTween.MoveTo(options, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		//Mettre le titre à gauche
+		iTween.MoveTo(transform.GetChild(0).gameObject, iTween.Hash("position", new Vector3(Screen.width * 2, transform.GetChild(0).transform.position.y, 0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack, "oncomplete", "GoToEditor", "oncompletetarget", this.gameObject));
+
+		scriptMenu.enabled = false;
 	}
 
+	/** Permet de revenir au menu principal */
 	public void BackToMenu(){
+		levelMenuManager.enabled = false;
 		//Remettre le menu au milieu
 		iTween.MoveTo(menu, iTween.Hash("position", new Vector3(Screen.width/2, Mathf.Floor(Screen.height/2), 0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
 
 		//Remettre les levels à droite
 		iTween.MoveTo(levels, iTween.Hash("position", new Vector3(Screen.width * 2,Mathf.Floor(Screen.height/2),0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
 	
-		//Remettre les options à gauche
-		iTween.MoveTo(options, iTween.Hash("position", new Vector3(-Screen.width * 2,Mathf.Floor(Screen.height/2),0), "time", timeTransition, "easetype", iTween.EaseType.easeInCubic));
+		ToggleCarousel();
+		levelMenuManager.levelTrigger.transform.position += new Vector3(LevelMenuManager.decalage+levelMenuManager.nbTotalLevels,0,0);
+		//Remettre carousel à droite
+		iTween.MoveTo(carousel, iTween.Hash("position", new Vector3(LevelMenuManager.decalage+levelMenuManager.nbTotalLevels,0,0), "time", timeTransition, "easetype", iTween.EaseType.easeInBack));
+		scriptMenu.enabled = true;
 	}
 
-	public void Quit(){
-		Debug.Log("Quit");
+	/** Permet d'activer/désactiver la rotation du labyrinthe */
+	private void ToggleCarousel(){
+		levelMenuManager.readyToMove = !levelMenuManager.readyToMove;
+	}
 
-		if(Application.isEditor)
-			Debug.Break();
-		else
-			Application.Quit();
+	/** Charge la scène de l'éditeur */
+	public void GoToEditor(){
+		Application.LoadLevel("editor");
+	}
+
+	/** Permet de quitter le jeu */
+	public void Quit(){
+		GameController.QuitTheGame();
 	}
 }
